@@ -1,0 +1,967 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@700&family=Pacifico&display=swap" rel="stylesheet">
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background: whitesmoke;
+            padding: 30px;
+            overflow-x: hidden;
+        }
+
+        #container {
+            width: 900px;
+            max-width: 100%;
+            margin: auto;
+            margin-bottom: 20px;
+            background: white;
+            padding: 25px 30px;
+            border: 2px solid midnightblue;
+            border-radius: 12px;
+        }
+
+        #container table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        #container td {
+            padding: 8px;
+            font-size: 17px;
+            font-weight: bold;
+            color: midnightblue;
+        }
+
+        #container td:first-child {
+            width: 35%;
+        }
+
+        #container input,
+        #container select {
+            width: 100%;
+            height: 40px;
+            padding: 7px 10px;
+            border: 1px solid darkgray;
+            border-radius: 6px;
+            outline: none;
+            font-size: 16px;
+        }
+
+        #container input:focus,
+        #container select:focus {
+            border: 2px solid midnightblue;
+        }
+
+        #actionbuttons {
+            padding-top: 18px;
+        }
+
+        #actionbuttons button {
+            width: 31%;
+            height: 45px;
+            border: none;
+            border-radius: 7px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            margin: 0 0.8%;
+        }
+
+        .reset {
+            background: lightgray;
+            color: #222;
+        }
+
+        .download {
+            background: firebrick;
+            color: white;
+        }
+
+        .share {
+            background: seagreen;
+            color: white;
+        }
+
+        .receipt-wrap {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .receipt {
+            width: 700px;
+            min-width: 700px;
+            background: white;
+            border: 8px solid midnightblue;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .echo {
+            padding: 15px 20px 12px;
+            border-bottom: 5px solid gold;
+        }
+
+        .brand {
+            text-align: center;
+        }
+
+        .brand h1 {
+            font-size: 60px;
+            color: midnightblue;
+            white-space: nowrap;
+            text-shadow:
+                2px 2px 0 lightgray,
+                4px 4px 0 lightsteelblue,
+                6px 6px 10px rgba(0, 0, 0, .25);
+        }
+
+        .brand h1 span {
+            color: firebrick;
+        }
+
+        .echo>p {
+            margin: 10px auto 0;
+            width: fit-content;
+            max-width: 100%;
+            padding: 7px 14px;
+            background: midnightblue;
+            color: white;
+            border: 2px solid gold;
+            border-radius: 20px;
+            font-size: 15px;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        .address {
+            margin-top: 8px;
+            font-size: 16px;
+            color: midnightblue;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        .rece {
+            width: 94%;
+            margin: 12px auto;
+            border-collapse: collapse;
+        }
+
+        .rece td {
+            padding: 5px 3px;
+            font-size: 15px;
+            font-weight: bold;
+            color: midnightblue;
+            text-align: center;
+        }
+
+        .rece td:first-child,
+        .rece td:nth-child(4) {
+            text-align: right;
+        }
+
+        .rece input {
+            width: 90px;
+            border: none;
+            outline: none;
+            background: transparent;
+            color: midnightblue;
+            font-size: 19px;
+            font-weight: bold;
+        }
+
+        #title {
+            display: block;
+            width: fit-content;
+            margin: auto;
+            padding: 7px 18px;
+            background: midnightblue;
+            color: white;
+            border: 2px solid gold;
+            border-radius: 20px;
+            font-size: 17px;
+            font-weight: bold;
+            text-align: center;
+            white-space: nowrap;
+        }
+
+        .form {
+            margin: 8px 25px;
+            padding: 18px 20px;
+            border: 2px solid midnightblue;
+            border-radius: 12px;
+        }
+
+        .row {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .row label {
+            width: 175px;
+            font-size: 16px;
+            font-weight: bold;
+            color: midnightblue;
+        }
+
+        .row p {
+            flex: 1;
+            min-height: 34px;
+            padding: 6px 8px;
+            border-bottom: 1px dotted dimgray;
+            font-size: 16px;
+            font-weight: bold;
+            color: #111;
+        }
+
+        #totalfees,
+        #paidfees,
+        #remaining {
+            font-size: 19px;
+            font-weight: bold;
+        }
+
+        #remaining {
+            color: brown;
+        }
+
+        .motivation {
+            margin: 8px 20px 5px;
+            padding: 5px;
+            text-align: center;
+            color: brown;
+            font-family: 'Caveat', cursive;
+            font-size: 17px;
+            font-weight: bold;
+        }
+
+        .bottom {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 25px;
+            border-top: 4px solid gold;
+        }
+
+        .future {
+            width: 190px;
+            text-align: center;
+        }
+
+        .invest-text {
+            font-family: 'Pacifico', 'Caveat', cursive;
+            font-size: 14px;
+            color: midnightblue;
+        }
+
+        .invest-arrow {
+            font-family: Arial;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .main-heading-edu {
+            font-family: 'Pacifico', cursive;
+            font-size: 25px;
+            color: midnightblue;
+        }
+
+        .book-section {
+            display: flex;
+            align-items: center;
+            width: 100%;
+            margin: 2px 0;
+        }
+
+        .divider-line {
+            height: 2px;
+            background: darkgoldenrod;
+            flex: 1;
+        }
+
+        .book-svg-container {
+            text-align: center;
+        }
+
+        .star-icon {
+            color: darkgoldenrod;
+            font-size: 10px;
+        }
+
+        .main-heading-fut {
+            font-family: 'Pacifico', cursive;
+            font-size: 27px;
+            color: firebrick;
+        }
+
+        .gold-seal {
+            width: 105px;
+            height: 105px;
+            background: gold;
+            border-radius: 50%;
+            padding: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .gold-seal-inner {
+            width: 100%;
+            height: 100%;
+            border: 2px dashed midnightblue;
+            border-radius: 50%;
+            background: midnightblue;
+            color: white;
+            text-align: center;
+            padding-top: 25px;
+        }
+
+        .gold-seal-inner p {
+            font-size: 10px;
+            font-weight: bold;
+            line-height: 1.2;
+        }
+
+        .gold-seal-inner p span {
+            color: gold;
+        }
+
+        .seal-star {
+            color: gold;
+            font-size: 8px;
+            margin-top: 2px;
+        }
+
+        .director {
+            width: 190px;
+            color: midnightblue;
+            text-align: left;
+        }
+
+        .director h3 {
+            display: inline-block;
+            padding: 4px 8px;
+            background: midnightblue;
+            color: white;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+
+        .director h2 {
+            margin-top: 4px;
+            color: brown;
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        .director p {
+            margin-top: 3px;
+            font-size: 16px;
+            font-weight: bold;
+        }
+
+        .thank {
+            padding: 8px;
+            background: midnightblue;
+            color: white;
+            text-align: center;
+            font-size: 19px;
+            font-weight: bold;
+        }
+
+        @media (max-width: 768px) {
+
+            body {
+                padding: 8px;
+            }
+
+            #container {
+                width: 100%;
+                padding: 15px 10px;
+            }
+
+            #container td {
+                display: block;
+                width: 100%;
+                padding: 5px 0;
+            }
+
+            #container td:first-child {
+                width: 100%;
+            }
+
+            #actionbuttons {
+                padding-top: 10px;
+            }
+
+            #actionbuttons button {
+                width: 100%;
+                margin: 0 0 8px;
+            }
+
+            .receipt-wrap {
+                width: 100%;
+                display: block;
+                overflow: hidden;
+                padding-top: 50px;
+                padding-bottom: 0;
+            }
+
+            .receipt {
+                width: 700px;
+                min-width: 700px;
+                transform: scale(0.45);
+                transform-origin: top left;
+                margin: 0 0 -385px 0;
+            }
+        }
+
+        @media print {
+
+            body {
+                padding: 0;
+                background: white;
+            }
+
+            #container {
+                display: none;
+            }
+
+            .receipt-wrap {
+                width: 100%;
+                padding: 0;
+                overflow: visible;
+            }
+
+            .receipt {
+                transform: none;
+                margin: 0;
+            }
+        }
+    </style>
+</head>
+
+<body onload="setdate(); randomno();">
+
+    <div id="container">
+
+        <table>
+
+            <tr>
+                <td>Student Name :</td>
+                <td>
+                    <input type="text" id="t1">
+                </td>
+            </tr>
+
+            <tr>
+                <td>Father's Name :</td>
+                <td>
+                    <input type="text" id="t2">
+                </td>
+            </tr>
+
+            <tr>
+                <td>Course :</td>
+                <td>
+                    <select id="t3" onchange="setfees()">
+                        <option value="" disabled selected hidden>Select Your Course</option>
+                        <option value="BCA First Year">BCA First Year</option>
+                        <option value="BCA Second Year">BCA Second Year</option>
+                        <option value="Full Stack Development">Full Stack Development</option>
+                    </select>
+                </td>
+            </tr>
+
+            <tr>
+                <td>Total Fees :</td>
+                <td>
+                    <input type="number" id="t4" readonly>
+                </td>
+            </tr>
+
+            <tr>
+                <td>Fees Received :</td>
+                <td>
+                    <input type="number" id="t5">
+                </td>
+            </tr>
+
+            <tr>
+                <td colspan="2" id="actionbuttons">
+                    <button class="reset" onclick="resetform()">Reset</button>
+                    <button class="download" onclick="downloadreceipt()">Download Receipt</button>
+                    <button class="share" onclick="sharereceipt()">Share Receipt</button>
+                </td>
+            </tr>
+
+        </table>
+
+    </div>
+
+    <div class="receipt-wrap" id="receiptWrap">
+
+        <div class="receipt" id="receipt" style="display:none">
+
+            <div class="echo">
+
+                <div class="brand">
+                    <h1>Echo <span>Education Point</span></h1>
+                </div>
+
+                <p>
+                    Special for BCA, MCA, Programming Languages and Web Development Courses
+                </p>
+
+                <div class="address">
+                    📍 D-Mart Road, Near Balaji Temple, Meghdoot Nagar, Mandsaur (M.P.)
+                </div>
+
+            </div>
+
+            <table class="rece">
+
+                <tr>
+
+                    <td>Receipt No. :</td>
+
+                    <td>
+                        <input type="text" id="receiptno" readonly>
+                    </td>
+
+                    <td>
+                        <div id="title">
+                            🧾 FEES RECEIPT 🧾
+                        </div>
+                    </td>
+
+                    <td>Date :</td>
+
+                    <td>
+                        <input type="text" id="date" readonly>
+                    </td>
+
+                </tr>
+
+            </table>
+
+            <div class="form">
+
+                <div class="row">
+                    <label>👤 Student Name :</label>
+                    <p id="studentname"></p>
+                </div>
+
+                <div class="row">
+                    <label>🧑‍💼 Father Name :</label>
+                    <p id="fathername"></p>
+                </div>
+
+                <div class="row">
+                    <label>📚 Course :</label>
+                    <p id="course"></p>
+                </div>
+
+                <div class="row">
+                    <label>💰 Total Fees :</label>
+                    <p id="totalfees"></p>
+                </div>
+
+                <div class="row">
+                    <label>💵 Amount :</label>
+                    <p id="paidfees"></p>
+                </div>
+
+                <div class="row">
+                    <label>💸 Remaining Fees :</label>
+                    <p id="remaining"></p>
+                </div>
+
+                <div class="row">
+                    <label>✍️ Received By :</label>
+                    <p id="receivedby">Vijay Jain</p>
+                </div>
+
+            </div>
+
+            <div class="motivation">
+                “शिक्षा में किया गया निवेश, भविष्य की सबसे बड़ी पूंजी है।” 🎓✨
+            </div>
+
+            <div class="bottom">
+
+                <div class="future">
+
+                    <div class="invest-text">
+                        <span class="invest-arrow">→</span>
+                        Invest in
+                        <span class="invest-arrow">←</span>
+                    </div>
+
+                    <div class="main-heading-edu">
+                        Education
+                    </div>
+
+                    <div class="book-section">
+
+                        <div class="divider-line"></div>
+
+                        <div class="book-svg-container">
+
+                            <div class="star-icon">★</div>
+
+                            <svg width="45" height="30" viewBox="0 0 60 42" xmlns="http://www.w3.org/2000/svg">
+
+                                <path d="M29 8C20 4 8 5 3 8V36C8 33 20 32 29 36Z" fill="midnightblue"
+                                    stroke="midnightblue" stroke-width="2" />
+
+                                <path d="M31 8C40 4 52 5 57 8V36C52 33 40 32 31 36Z" fill="midnightblue"
+                                    stroke="midnightblue" stroke-width="2" />
+
+                                <path
+                                    d="M10 14C17 12 23 12 26 14M8 20C16 18 23 18 26 20M8 26C16 24 23 24 26 26M34 14C37 12 43 12 50 14M34 20C37 18 44 18 52 20M34 26C37 24 44 24 52 26"
+                                    stroke="white" stroke-width="1.5" stroke-linecap="round" />
+
+                            </svg>
+
+                        </div>
+
+                        <div class="divider-line"></div>
+
+                    </div>
+
+                    <div class="invest-text">
+                        <span class="invest-arrow">→</span>
+                        Invest in
+                        <span class="invest-arrow">←</span>
+                    </div>
+
+                    <div class="main-heading-fut">
+                        Future
+                    </div>
+
+                </div>
+
+                <div class="gold-seal">
+
+                    <div class="gold-seal-inner">
+
+                        <p>
+                            LEARN<br>
+                            <span>CODE</span><br>
+                            GROW<br>
+                            SUCCEED
+                        </p>
+
+                        <div class="seal-star">
+                            ★ ★ ★
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <div class="director">
+
+                    <h3>Director</h3>
+
+                    <h2>Vijay Jain</h2>
+
+                    <p>(B.C.A., M.Sc., M.C.A.)</p>
+
+                    <p style="font-size:18px;">
+                        📞 8269399715
+                    </p>
+
+                    <p>
+                        INSTA : @vijayjainechoeducation
+                    </p>
+
+                </div>
+
+            </div>
+
+            <div class="thank">
+                🔸🔸🔸🔶 THANK YOU 🔶🔸🔸🔸
+            </div>
+
+        </div>
+
+    </div>
+
+    <script>
+
+        function randomno() {
+
+            receiptno.value =
+                "EEP0" + Math.floor(100 + Math.random() * 900);
+
+        }
+
+        function setdate() {
+
+            let d = new Date();
+
+            date.value =
+                d.getDate() + "/" +
+                (d.getMonth() + 1) + "/" +
+                d.getFullYear();
+
+        }
+
+        function setfees() {
+
+            if (t3.value === "BCA First Year") {
+
+                t4.value = 10000;
+
+            } else if (t3.value === "BCA Second Year") {
+
+                t4.value = 11000;
+
+            } else if (t3.value === "Full Stack Development") {
+
+                t4.value = 13000;
+
+            }
+
+        }
+
+        function calculate() {
+
+            setfees();
+
+            if (t1.value.trim() === "") {
+
+                alert("Please enter Student Name");
+                return false;
+
+            }
+
+            if (t2.value.trim() === "") {
+
+                alert("Please enter Father's Name");
+                return false;
+
+            }
+
+            if (t3.value === "") {
+
+                alert("Please select Course");
+                return false;
+
+            }
+
+            if (t4.value === "") {
+
+                alert("Please select Course");
+                return false;
+
+            }
+
+            if (t5.value === "") {
+
+                alert("Please enter Fees Received");
+                return false;
+
+            }
+
+            if (Number(t5.value) > Number(t4.value)) {
+
+                alert("Fees Received cannot be greater than Total Fees");
+                return false;
+
+            }
+
+            studentname.innerText = t1.value;
+
+            fathername.innerText = t2.value;
+
+            course.innerText = t3.value;
+
+            totalfees.innerText =
+                "Rs. " +
+                Number(t4.value).toLocaleString("en-IN") +
+                "/-";
+
+            paidfees.innerText =
+                "Rs. " +
+                Number(t5.value).toLocaleString("en-IN") +
+                "/-";
+
+            remaining.innerText =
+                "Rs. " +
+                (
+                    Number(t4.value) -
+                    Number(t5.value)
+                ).toLocaleString("en-IN") +
+                "/-";
+
+            return true;
+
+        }
+
+        function downloadreceipt() {
+
+            if (calculate() === false) {
+
+                return;
+
+            }
+
+            container.style.display = "none";
+
+            receipt.style.display = "block";
+
+            html2canvas(receipt, {
+
+                scale: 2,
+                useCORS: true,
+                backgroundColor: "white"
+
+            }).then(function (canvas) {
+
+                let link =
+                    document.createElement("a");
+
+                link.href =
+                    canvas.toDataURL("image/png");
+
+                link.download =
+                    "Receipt-" +
+                    receiptno.value +
+                    ".png";
+
+                document.body.appendChild(link);
+
+                link.click();
+
+                document.body.removeChild(link);
+
+            });
+
+        }
+
+        function sharereceipt() {
+
+            if (calculate() === false) {
+
+                return;
+
+            }
+
+            container.style.display = "none";
+
+            receipt.style.display = "block";
+
+            html2canvas(receipt, {
+
+                scale: 2,
+                useCORS: true,
+                backgroundColor: "white"
+
+            }).then(function (canvas) {
+
+                canvas.toBlob(function (blob) {
+
+                    let file =
+                        new File(
+                            [blob],
+                            "Receipt-" +
+                            receiptno.value +
+                            ".png",
+                            {
+                                type: "image/png"
+                            }
+                        );
+
+                    if (
+                        navigator.canShare &&
+                        navigator.canShare({
+                            files: [file]
+                        })
+                    ) {
+
+                        navigator.share({
+
+                            title:
+                                "Echo Education Point",
+
+                            text:
+                                "Fees Receipt - " +
+                                receiptno.value,
+
+                            files: [file]
+
+                        });
+
+                    } else {
+
+                        alert(
+                            "Sharing files is not supported on this browser."
+                        );
+
+                    }
+
+                });
+
+            });
+
+        }
+
+        function resetform() {
+
+            t1.value = "";
+
+            t2.value = "";
+
+            t3.value = "";
+
+            t4.value = "";
+
+            t5.value = "";
+
+            studentname.innerText = "";
+
+            fathername.innerText = "";
+
+            course.innerText = "";
+
+            totalfees.innerText = "";
+
+            paidfees.innerText = "";
+
+            remaining.innerText = "";
+
+            receipt.style.display = "none";
+
+            container.style.display = "block";
+
+            setdate();
+
+            randomno();
+
+        }
+
+    </script>
+
+</body>
+
+</html>
