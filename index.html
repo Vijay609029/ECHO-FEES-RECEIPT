@@ -265,55 +265,52 @@
             text-align: center;
         }
 
-        .invest-text {
+        .invest {
             font-family: 'Pacifico', 'Caveat', cursive;
-            font-size: 14px;
-            color: midnightblue;
-        }
-
-        .invest-arrow {
-            font-family: Arial;
             font-size: 12px;
-            font-weight: bold;
-        }
-
-        .main-heading-edu {
-            font-family: 'Pacifico', cursive;
-            font-size: 25px;
+            line-height: 1;
             color: midnightblue;
         }
 
-        .book-section {
+        .mainheading {
+            font-family: 'Pacifico', cursive;
+            font-size: 20px;
+            line-height: 1;
+            color: midnightblue;
+        }
+
+        .futuretext {
+            font-family: 'Pacifico', cursive;
+            font-size: 27px;
+            line-height: 1;
+            color: firebrick;
+        }
+
+        .booksection {
             display: flex;
             align-items: center;
             width: 100%;
             margin: 2px 0;
         }
 
-        .divider-line {
+        .line {
             height: 2px;
             background: darkgoldenrod;
             flex: 1;
         }
 
-        .book-svg-container {
+        .bookicon {
             text-align: center;
         }
 
-        .star-icon {
+        .star {
             color: darkgoldenrod;
             font-size: 10px;
         }
 
-        .main-heading-fut {
-            font-family: 'Pacifico', cursive;
-            font-size: 27px;
-            color: firebrick;
-        }
-
-        .gold-seal {
-            width: 105px;
-            height: 105px;
+        .seal {
+            width: 120px;
+            height: 120px;
             background: gold;
             border-radius: 50%;
             padding: 5px;
@@ -322,7 +319,7 @@
             justify-content: center;
         }
 
-        .gold-seal-inner {
+        .sealinside {
             width: 100%;
             height: 100%;
             border: 2px dashed midnightblue;
@@ -333,19 +330,19 @@
             padding-top: 25px;
         }
 
-        .gold-seal-inner p {
-            font-size: 10px;
+        .sealinside p {
+            font-size: 14px;
             font-weight: bold;
             line-height: 1.2;
         }
 
-        .gold-seal-inner p span {
+        .sealinside p span {
             color: gold;
         }
 
-        .seal-star {
+        .sealstar {
             color: gold;
-            font-size: 8px;
+            font-size: 10px;
             margin-top: 2px;
         }
 
@@ -602,30 +599,30 @@
             </div>
 
             <div class="motivation">
-                “शिक्षा में किया गया निवेश, भविष्य की सबसे बड़ी पूंजी है।” 🎓✨
+                ✨✨ “ शिक्षा में किया गया निवेश, भविष्य की सबसे बड़ी पूंजी है।” ✨✨
             </div>
 
             <div class="bottom">
 
                 <div class="future">
 
-                    <div class="invest-text">
+                    <div class="invest">
                         <span class="invest-arrow">→</span>
                         Invest in
                         <span class="invest-arrow">←</span>
                     </div>
 
-                    <div class="main-heading-edu">
+                    <div class="mainheading">
                         Education
                     </div>
 
-                    <div class="book-section">
+                    <div class="booksection">
 
-                        <div class="divider-line"></div>
+                        <div class="line"></div>
 
-                        <div class="book-svg-container">
+                        <div class="bookicon">
 
-                            <div class="star-icon">★</div>
+                            <div class="star">★</div>
 
                             <svg width="45" height="30" viewBox="0 0 60 42" xmlns="http://www.w3.org/2000/svg">
 
@@ -643,25 +640,25 @@
 
                         </div>
 
-                        <div class="divider-line"></div>
+                        <div class="line"></div>
 
                     </div>
 
-                    <div class="invest-text">
+                    <div class="invest">
                         <span class="invest-arrow">→</span>
                         Invest in
                         <span class="invest-arrow">←</span>
                     </div>
 
-                    <div class="main-heading-fut">
+                    <div class="futuretext">
                         Future
                     </div>
 
                 </div>
 
-                <div class="gold-seal">
+                <div class="seal">
 
-                    <div class="gold-seal-inner">
+                    <div class="sealinside">
 
                         <p>
                             LEARN<br>
@@ -670,7 +667,7 @@
                             SUCCEED
                         </p>
 
-                        <div class="seal-star">
+                        <div class="sealstar">
                             ★ ★ ★
                         </div>
 
@@ -748,39 +745,9 @@
 
             setfees();
 
-            if (t1.value.trim() === "") {
-
-                alert("Please enter Student Name");
+            if (t1.value == "" || t2.value == "" || t3.value == "" || t4.value == "" || t5.value == "") {
+                alert("plese fill this filed")
                 return false;
-
-            }
-
-            if (t2.value.trim() === "") {
-
-                alert("Please enter Father's Name");
-                return false;
-
-            }
-
-            if (t3.value === "") {
-
-                alert("Please select Course");
-                return false;
-
-            }
-
-            if (t4.value === "") {
-
-                alert("Please select Course");
-                return false;
-
-            }
-
-            if (t5.value === "") {
-
-                alert("Please enter Fees Received");
-                return false;
-
             }
 
             if (Number(t5.value) > Number(t4.value)) {
@@ -798,21 +765,19 @@
 
             totalfees.innerText =
                 "Rs. " +
-                Number(t4.value).toLocaleString("en-IN") +
-                "/-";
+                Number(t4.value) + " /-";
 
             paidfees.innerText =
                 "Rs. " +
-                Number(t5.value).toLocaleString("en-IN") +
-                "/-";
+                Number(t5.value) + " /-";
 
             remaining.innerText =
                 "Rs. " +
                 (
                     Number(t4.value) -
                     Number(t5.value)
-                ).toLocaleString("en-IN") +
-                "/-";
+                ) +
+                " /-";
 
             return true;
 
@@ -938,25 +903,9 @@
 
             t5.value = "";
 
-            studentname.innerText = "";
-
-            fathername.innerText = "";
-
-            course.innerText = "";
-
-            totalfees.innerText = "";
-
-            paidfees.innerText = "";
-
-            remaining.innerText = "";
-
             receipt.style.display = "none";
 
             container.style.display = "block";
-
-            setdate();
-
-            randomno();
 
         }
 
