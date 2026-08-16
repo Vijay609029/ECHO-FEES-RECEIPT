@@ -165,7 +165,7 @@
 
         .rece td {
             padding: 5px 3px;
-            font-size: 15px;
+            font-size: 14px;
             font-weight: bold;
             color: midnightblue;
             text-align: center;
@@ -176,8 +176,14 @@
             text-align: right;
         }
 
+        .rece td:nth-child(2),
+        .rece td:nth-child(5) {
+            text-align: left;
+        }
+
+
         .rece input {
-            width: 90px;
+            width: 100px;
             border: none;
             outline: none;
             background: transparent;
@@ -455,7 +461,7 @@
     </style>
 </head>
 
-<body onload="setdate(); randomno();">
+<body onload="randomno();">
 
     <div id="container">
 
@@ -488,7 +494,7 @@
             </tr>
 
             <tr>
-                <td>Total Fees :</td>
+                <td> Amount :</td>
                 <td>
                     <input type="number" id="t4" readonly>
                 </td>
@@ -500,7 +506,15 @@
                     <input type="number" id="t5">
                 </td>
             </tr>
+            <tr>
 
+                <td>Date :</td>
+
+                <td>
+                    <input type="date" id="userdate">
+                </td>
+
+            </tr>
             <tr>
                 <td colspan="2" id="actionbuttons">
                     <button class="reset" onclick="resetform()">Reset</button>
@@ -577,12 +591,12 @@
                 </div>
 
                 <div class="row">
-                    <label>💰 Total Fees :</label>
+                    <label>💸Amount:</label>
                     <p id="totalfees"></p>
                 </div>
 
                 <div class="row">
-                    <label>💵 Amount :</label>
+                    <label>💵 Paid Amount :</label>
                     <p id="paidfees"></p>
                 </div>
 
@@ -704,22 +718,10 @@
     </div>
 
     <script>
-
         function randomno() {
 
             receiptno.value =
                 "EEP0" + Math.floor(100 + Math.random() * 900);
-
-        }
-
-        function setdate() {
-
-            let d = new Date();
-
-            date.value =
-                d.getDate() + "/" +
-                (d.getMonth() + 1) + "/" +
-                d.getFullYear();
 
         }
 
@@ -745,9 +747,17 @@
 
             setfees();
 
-            if (t1.value == "" || t2.value == "" || t3.value == "" || t4.value == "" || t5.value == "") {
-                alert("plese fill this filed")
+            if (
+                t1.value == "" ||
+                t2.value == "" ||
+                t3.value == "" ||
+                t4.value == "" ||
+                t5.value == ""
+            ) {
+
+                alert("Please fill this field");
                 return false;
+
             }
 
             if (Number(t5.value) > Number(t4.value)) {
@@ -757,27 +767,46 @@
 
             }
 
-            studentname.innerText = t1.value;
+            studentname.innerHTML = t1.value;
 
-            fathername.innerText = t2.value;
+            fathername.innerHTML = t2.value;
 
             course.innerText = t3.value;
 
-            totalfees.innerText =
+            totalfees.innerHTML =
                 "Rs. " +
-                Number(t4.value) + " /-";
+                Number(t4.value) +
+                " /-";
 
-            paidfees.innerText =
+            paidfees.innerHTML =
                 "Rs. " +
-                Number(t5.value) + " /-";
+                Number(t5.value) +
+                " /-";
 
-            remaining.innerText =
+            remaining.innerHTML =
                 "Rs. " +
                 (
                     Number(t4.value) -
                     Number(t5.value)
                 ) +
                 " /-";
+
+            if (userdate.value == "") {
+
+                let d = new Date();
+
+                date.value =
+                    d.getDate() + "/" +
+                    (d.getMonth() + 1) + "/" +
+                    d.getFullYear();
+
+            } else {
+
+                let d = userdate.value.split("-");
+
+                date.value = d[2] + "/" + d[1] + "/" + d[0];
+
+            }
 
             return true;
 
@@ -903,12 +932,15 @@
 
             t5.value = "";
 
+            userdate.value = "";
+
             receipt.style.display = "none";
 
             container.style.display = "block";
 
-        }
+            randomno();
 
+        }
     </script>
 
 </body>
