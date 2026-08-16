@@ -61,6 +61,31 @@
             font-size: 16px;
         }
 
+        #container input[type="radio"] {
+            width: auto;
+            height: auto;
+            padding: 0;
+            margin: 0 5px 0 0;
+            vertical-align: middle;
+        }
+
+        .radio-group {
+            display: flex;
+            align-items: center;
+            gap: 18px;
+            flex-wrap: nowrap;
+        }
+
+        .radio-group label {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            white-space: nowrap;
+            font-size: 16px;
+            font-weight: normal;
+            color: #222;
+        }
+
         #container input:focus,
         #container select:focus {
             border: 2px solid midnightblue;
@@ -456,7 +481,7 @@
     </style>
 </head>
 
-<body onload="randomno();">
+<body onload="randomno(); setTodayDate();">
 
     <div id="container">
 
@@ -479,15 +504,19 @@
             <tr>
                 <td>Course :</td>
                 <td>
-                    <select id="t3" onchange="setfees()">
-                        <option value="" disabled selected hidden>Select Your Course</option>
-                        <option value="BCA First Year">BCA First Year</option>
-                        <option value="BCA Second Year">BCA Second Year</option>
-                        <option value="Full Stack Development">Full Stack Development</option>
-                    </select>
+                    <label style="margin-right:18px;">
+                        <input type="radio" name="course" value="BCA First Year" checked onchange="setfees()">1 Year
+                    </label>
+                    <label style="margin-right:18px;">
+                        <input type="radio" name="course" value="BCA Second Year" onchange="setfees()">2 Year
+                    </label>
+                    <label>
+                        <input type="radio" name="course" value="Full Stack Development" onchange="setfees()"> Full
+                        Stack
+                    </label>
+                    <input type="hidden" id="t3">
                 </td>
             </tr>
-
             <tr>
                 <td> Amount :</td>
                 <td>
@@ -501,6 +530,18 @@
                     <input type="number" id="t5">
                 </td>
             </tr>
+            <tr>
+                <td>Payment Mode :</td>
+                <td>
+                    <label style="margin-right:25px;">
+                        <input type="radio" name="payment" checked value="Cash"> Cash
+                    </label>
+                    <label>
+                        <input type="radio" name="payment" value="UPI"> UPI
+                    </label>
+                </td>
+            </tr>
+
             <tr>
 
                 <td>Date :</td>
@@ -591,7 +632,7 @@
                 </div>
 
                 <div class="row">
-                    <label>💵 Paid Amount :</label>
+                    <label>💵 Received Amount :</label>
                     <p id="paidfees"></p>
                 </div>
 
@@ -713,163 +754,117 @@
     </div>
 
     <script>
+        function setTodayDate() {
+
+            let d = new Date();
+
+            let day = d.getDate();
+            let month = d.getMonth() + 1;
+            let year = d.getFullYear();
+
+            if (day < 10) {
+                day = "0" + day;
+            }
+
+            if (month < 10) {
+                month = "0" + month;
+            }
+
+            userdate.value = year + "-" + month + "-" + day;
+
+        }
         function randomno() {
 
             receiptno.value =
                 "EEP0" + Math.floor(100 + Math.random() * 900);
 
         }
-
         function setfees() {
+            let selectedCourse =
+                document.querySelector('input[name="course"]:checked');
 
-            if (t3.value === "BCA First Year") {
-
-                t4.value = 10000;
-
-            } else if (t3.value === "BCA Second Year") {
-
-                t4.value = 11000;
-
-            } else if (t3.value === "Full Stack Development") {
-
-                t4.value = 13000;
-
+            if (!selectedCourse) {
+                return;
             }
-
+            t3.value = selectedCourse.value;
+            if (t3.value == "BCA First Year") {
+                t4.value = 10000;
+            }
+            else if (t3.value == "BCA Second Year") {
+                t4.value = 11000;
+            }
+            else if (t3.value == "Full Stack Development") {
+                t4.value = 13000;
+            }
         }
-
         function calculate() {
-
             setfees();
-
-            if (
-                t1.value == "" ||
-                t2.value == "" ||
-                t3.value == "" ||
-                t4.value == "" ||
-                t5.value == ""
-            ) {
-
+            let selectedPayment =
+                document.querySelector('input[name="payment"]:checked');
+            if (t1.value == "" || t2.value == "" || t3.value == "" || t4.value == "" || t5.value == "" || !selectedPayment) {
                 alert("Please fill this field");
                 return false;
-
             }
-
             if (Number(t5.value) > Number(t4.value)) {
-
                 alert("Fees Received cannot be greater than Total Fees");
                 return false;
-
             }
-
             studentname.innerHTML = t1.value;
-
             fathername.innerHTML = t2.value;
-
-            course.innerText = t3.value;
-
-            totalfees.innerHTML =
-                "Rs. " +
-                Number(t4.value) +
-                " /-";
-
-            paidfees.innerHTML =
-                "Rs. " +
-                Number(t5.value) +
-                " /-";
-
-            remaining.innerHTML =
-                "Rs. " +
-                (
-                    Number(t4.value) -
-                    Number(t5.value)
-                ) +
-                " /-";
-
+            course.innerHTML = t3.value;
+            totalfees.innerHTML = "Rs. " + t4.value + " /-";
+            paidfees.innerHTML = "Rs. " + t5.value + " /- By " + selectedPayment.value;
+            remaining.innerHTML = "Rs. " + (Number(t4.value) - Number(t5.value)) + " /-";
             if (userdate.value == "") {
 
-                let d = new Date();
-
-                date.value =
-                    d.getDate() + "/" +
-                    (d.getMonth() + 1) + "/" +
-                    d.getFullYear();
-
-            } else {
-
-                let d = userdate.value.split("-");
-
-                date.value = d[2] + "/" + d[1] + "/" + d[0];
-
+                setTodayDate();
             }
-
+            else {
+                let d = userdate.value.split("-");
+                date.value =
+                    d[2] + "/" +
+                    d[1] + "/" +
+                    d[0];
+            }
             return true;
-
         }
-
         function downloadreceipt() {
 
-            if (calculate() === false) {
+            if (calculate() == false) {
 
                 return;
-
             }
-
             container.style.display = "none";
-
             receipt.style.display = "block";
-
             html2canvas(receipt, {
-
                 scale: 2,
                 useCORS: true,
                 backgroundColor: "white"
-
             }).then(function (canvas) {
 
                 let link =
                     document.createElement("a");
-
                 link.href =
                     canvas.toDataURL("image/png");
-
-                link.download =
-                    "Receipt-" +
-                    receiptno.value +
-                    ".png";
-
+                link.download = "Receipt-" + receiptno.value + ".png";
                 document.body.appendChild(link);
-
                 link.click();
-
                 document.body.removeChild(link);
-
             });
 
         }
-
         function sharereceipt() {
-
-            if (calculate() === false) {
-
+            if (calculate() == false) {
                 return;
-
             }
-
             container.style.display = "none";
-
             receipt.style.display = "block";
-
             html2canvas(receipt, {
-
                 scale: 2,
                 useCORS: true,
                 backgroundColor: "white"
-
             }).then(function (canvas) {
-
                 canvas.toBlob(function (blob) {
-
                     let file =
                         new File(
                             [blob],
@@ -880,60 +875,32 @@
                                 type: "image/png"
                             }
                         );
-
                     if (
                         navigator.canShare &&
                         navigator.canShare({
                             files: [file]
                         })
                     ) {
-
                         navigator.share({
-
                             title:
                                 "Echo Education Point",
-
-                            text:
-                                "Fees Receipt - " +
-                                receiptno.value,
-
                             files: [file]
-
                         });
-
-                    } else {
-
-                        alert(
-                            "Sharing files is not supported on this browser."
-                        );
-
                     }
-
+                    else {
+                        alert("Sharing files is not supported on this browser.");
+                    }
                 });
-
             });
-
         }
-
         function resetform() {
-
             t1.value = "";
-
             t2.value = "";
-
             t3.value = "";
-
             t4.value = "";
-
             t5.value = "";
-
-            userdate.value = "";
-
             receipt.style.display = "none";
-
             container.style.display = "block";
-
-            randomno();
 
         }
     </script>
