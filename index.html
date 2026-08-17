@@ -259,7 +259,8 @@
 
         #totalfees,
         #paidfees,
-        #remaining {
+        #remaining,
+        #pra {
             font-size: 19px;
             font-weight: bold;
         }
@@ -525,6 +526,12 @@
             </tr>
 
             <tr>
+                <td>Previous fees Received :</td>
+                <td>
+                    <input type="number" id="pfs" value="0">
+                </td>
+            </tr>
+            <tr>
                 <td>Fees Received :</td>
                 <td>
                     <input type="number" id="t5">
@@ -629,6 +636,11 @@
                 <div class="row">
                     <label>💸Amount:</label>
                     <p id="totalfees"></p>
+                </div>
+
+                <div class="row" id="previousrow">
+                    <label>💵Previous Amount :</label>
+                    <p id="pra"></p>
                 </div>
 
                 <div class="row">
@@ -752,7 +764,6 @@
         </div>
 
     </div>
-
     <script>
         function setTodayDate() {
 
@@ -813,8 +824,15 @@
             fathername.innerHTML = t2.value;
             course.innerHTML = t3.value;
             totalfees.innerHTML = "Rs. " + t4.value + " /-";
+            if (Number(pfs.value) == 0) {
+                previousrow.style.display = "none";
+            }
+            else {
+                previousrow.style.display = "flex";
+                pra.innerHTML = "Rs." + pfs.value + " /-";
+            }
             paidfees.innerHTML = "Rs. " + t5.value + " /- By " + selectedPayment.value;
-            remaining.innerHTML = "Rs. " + (Number(t4.value) - Number(t5.value)) + " /-";
+            remaining.innerHTML = "Rs. " + (Number(t4.value) - Number(pfs.value) - Number(t5.value)) + " /-";
             if (userdate.value == "") {
 
                 setTodayDate();
@@ -893,6 +911,7 @@
                 });
             });
         }
+
         function resetform() {
             t1.value = "";
             t2.value = "";
