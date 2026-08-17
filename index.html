@@ -69,23 +69,6 @@
             vertical-align: middle;
         }
 
-        .radio-group {
-            display: flex;
-            align-items: center;
-            gap: 18px;
-            flex-wrap: nowrap;
-        }
-
-        .radio-group label {
-            display: flex;
-            align-items: center;
-            gap: 4px;
-            white-space: nowrap;
-            font-size: 16px;
-            font-weight: normal;
-            color: #222;
-        }
-
         #container input:focus,
         #container select:focus {
             border: 2px solid midnightblue;
@@ -200,7 +183,6 @@
         .rece td:nth-child(4) {
             text-align: right;
         }
-
 
         .rece input {
             width: 110px;
@@ -411,7 +393,6 @@
         }
 
         @media (max-width: 768px) {
-
             body {
                 padding: 8px;
             }
@@ -458,7 +439,6 @@
         }
 
         @media print {
-
             body {
                 padding: 0;
                 background: white;
@@ -508,18 +488,22 @@
                     <label style="margin-right:18px;">
                         <input type="radio" name="course" value="BCA First Year" checked onchange="setfees()">1 Year
                     </label>
+
                     <label style="margin-right:18px;">
                         <input type="radio" name="course" value="BCA Second Year" onchange="setfees()">2 Year
                     </label>
+
                     <label>
                         <input type="radio" name="course" value="Full Stack Development" onchange="setfees()"> Full
                         Stack
                     </label>
+
                     <input type="hidden" id="t3">
                 </td>
             </tr>
+
             <tr>
-                <td> Amount :</td>
+                <td>Amount :</td>
                 <td>
                     <input type="number" id="t4" readonly>
                 </td>
@@ -531,18 +515,21 @@
                     <input type="number" id="pfs" value="0">
                 </td>
             </tr>
+
             <tr>
                 <td>Fees Received :</td>
                 <td>
                     <input type="number" id="t5">
                 </td>
             </tr>
+
             <tr>
                 <td>Payment Mode :</td>
                 <td>
                     <label style="margin-right:25px;">
                         <input type="radio" name="payment" checked value="Cash"> Cash
                     </label>
+
                     <label>
                         <input type="radio" name="payment" value="UPI"> UPI
                     </label>
@@ -550,14 +537,12 @@
             </tr>
 
             <tr>
-
                 <td>Date :</td>
-
                 <td>
                     <input type="date" id="userdate">
                 </td>
-
             </tr>
+
             <tr>
                 <td colspan="2" id="actionbuttons">
                     <button class="reset" onclick="resetform()">Reset</button>
@@ -643,7 +628,7 @@
                     <p id="pra"></p>
                 </div>
 
-                <div class="row">
+                <div class="row" id="recivedrow">
                     <label>💵 Received Amount :</label>
                     <p id="paidfees"></p>
                 </div>
@@ -669,9 +654,9 @@
                 <div class="future">
 
                     <div class="invest">
-                        <span class="invest-arrow">→</span>
+                        <span>→</span>
                         Invest in
-                        <span class="invest-arrow">←</span>
+                        <span>←</span>
                     </div>
 
                     <div class="mainheading">
@@ -707,9 +692,9 @@
                     </div>
 
                     <div class="invest">
-                        <span class="invest-arrow">→</span>
+                        <span>→</span>
                         Invest in
-                        <span class="invest-arrow">←</span>
+                        <span>←</span>
                     </div>
 
                     <div class="futuretext">
@@ -764,9 +749,9 @@
         </div>
 
     </div>
+
     <script>
         function setTodayDate() {
-
             let d = new Date();
 
             let day = d.getDate();
@@ -782,14 +767,13 @@
             }
 
             userdate.value = year + "-" + month + "-" + day;
-
         }
-        function randomno() {
 
+        function randomno() {
             receiptno.value =
                 "EEP0" + Math.floor(100 + Math.random() * 900);
-
         }
+
         function setfees() {
             let selectedCourse =
                 document.querySelector('input[name="course"]:checked');
@@ -797,7 +781,9 @@
             if (!selectedCourse) {
                 return;
             }
+
             t3.value = selectedCourse.value;
+
             if (t3.value == "BCA First Year") {
                 t4.value = 10000;
             }
@@ -808,52 +794,127 @@
                 t4.value = 13000;
             }
         }
+
         function calculate() {
             setfees();
+
             let selectedPayment =
                 document.querySelector('input[name="payment"]:checked');
-            if (t1.value == "" || t2.value == "" || t3.value == "" || t4.value == "" || t5.value == "" || !selectedPayment) {
+
+            let total = Number(t4.value);
+            let previous = Number(pfs.value) || 0;
+            let received = Number(t5.value) || 0;
+
+            if (
+                t1.value.trim() == "" ||
+                t2.value.trim() == "" ||
+                t3.value == "" ||
+                t4.value == "" ||
+                !selectedPayment
+            ) {
                 alert("Please fill this field");
                 return false;
             }
-            if (Number(t5.value) > Number(t4.value)) {
+
+            if (previous == 0 && received == 0) {
+                alert("Please enter Previous Fees or Fees Received");
+                return false;
+            }
+
+            if (previous < 0 || received < 0) {
+                alert("Fees cannot be negative");
+                return false;
+            }
+
+            if (previous > total) {
+                alert("Previous Fees cannot be greater than Total Fees");
+                return false;
+            }
+
+            if (received > total) {
                 alert("Fees Received cannot be greater than Total Fees");
                 return false;
             }
+
+            if (previous == total && received > 0) {
+                alert("Previous Fees is already equal to Total Fees. Fees Received will be set to 0.");
+
+                t5.value = 0;
+                received = 0;
+            }
+
+            else if (received == total && previous > 0) {
+                alert("Fees Received is equal to Total Fees. Previous Fees will be set to 0.");
+
+                pfs.value = 0;
+                previous = 0;
+            }
+
+            else if (previous + received > total) {
+                alert("Previous Fees and Fees Received together cannot be greater than Total Fees.");
+                return false;
+            }
+
             studentname.innerHTML = t1.value;
             fathername.innerHTML = t2.value;
             course.innerHTML = t3.value;
-            totalfees.innerHTML = "Rs. " + t4.value + " /-";
-            if (Number(pfs.value) == 0) {
+
+            totalfees.innerHTML =
+                "Rs. " + total + " /-";
+
+            if (previous == 0) {
                 previousrow.style.display = "none";
+
             }
             else {
                 previousrow.style.display = "flex";
-                pra.innerHTML = "Rs." + pfs.value + " /-";
+                pra.innerHTML =
+                    "Rs. " + previous + " /- By " + selectedPayment.value;;
             }
-            paidfees.innerHTML = "Rs. " + t5.value + " /- By " + selectedPayment.value;
-            remaining.innerHTML = "Rs. " + (Number(t4.value) - Number(pfs.value) - Number(t5.value)) + " /-";
-            if (userdate.value == "") {
 
-                setTodayDate();
+            if (received == 0) {
+                recivedrow.style.display = "none";
             }
             else {
-                let d = userdate.value.split("-");
-                date.value =
-                    d[2] + "/" +
-                    d[1] + "/" +
-                    d[0];
+                recivedrow.style.display = "flex";
+
+                paidfees.innerHTML =
+                    "Rs. " + received + " /- By " + selectedPayment.value;
             }
+
+
+            let remainingFees =
+                total - previous - received;
+
+            if (remainingFees < 0) {
+                remainingFees = 0;
+            }
+
+            remaining.innerHTML =
+                "Rs. " + remainingFees + " /-";
+
+            if (userdate.value == "") {
+                setTodayDate();
+            }
+
+            let d = userdate.value.split("-");
+
+            date.value =
+                d[2] + "/" +
+                d[1] + "/" +
+                d[0];
+
             return true;
         }
+
         function downloadreceipt() {
-
             if (calculate() == false) {
-
                 return;
             }
+
             container.style.display = "none";
             receipt.style.display = "block";
+
             html2canvas(receipt, {
                 scale: 2,
                 useCORS: true,
@@ -862,27 +923,35 @@
 
                 let link =
                     document.createElement("a");
+
                 link.href =
                     canvas.toDataURL("image/png");
-                link.download = "Receipt-" + receiptno.value + ".png";
+
+                link.download =
+                    "Receipt-" + receiptno.value + ".png";
+
                 document.body.appendChild(link);
                 link.click();
                 document.body.removeChild(link);
             });
-
         }
+
         function sharereceipt() {
             if (calculate() == false) {
                 return;
             }
+
             container.style.display = "none";
             receipt.style.display = "block";
+
             html2canvas(receipt, {
                 scale: 2,
                 useCORS: true,
                 backgroundColor: "white"
             }).then(function (canvas) {
+
                 canvas.toBlob(function (blob) {
+
                     let file =
                         new File(
                             [blob],
@@ -893,6 +962,7 @@
                                 type: "image/png"
                             }
                         );
+
                     if (
                         navigator.canShare &&
                         navigator.canShare({
@@ -900,8 +970,7 @@
                         })
                     ) {
                         navigator.share({
-                            title:
-                                "Echo Education Point",
+                            title: "Echo Education Point",
                             files: [file]
                         });
                     }
@@ -917,10 +986,13 @@
             t2.value = "";
             t3.value = "";
             t4.value = "";
+            pfs.value = "0";
             t5.value = "";
             receipt.style.display = "none";
             container.style.display = "block";
-
+            randomno();
+            setTodayDate();
+            setfees();
         }
     </script>
 
