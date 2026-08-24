@@ -78,7 +78,7 @@
         }
 
         #actionbuttons button {
-            width: 23%;
+            width: 18%;
             height: 45px;
             border: 0;
             border-radius: 7px;
@@ -91,6 +91,11 @@
         .reset {
             background: lightgray;
             color: #222
+        }
+
+        .saveonly {
+            background-color: green;
+            color: #111;
         }
 
         .download {
@@ -787,6 +792,9 @@
                     <button class="reset" onclick="resetform()">
                         Reset
                     </button>
+                    <button class="saveonly" onclick="saveonlyserver()">
+                        saveonly
+                    </button>
 
                     <button class="download" onclick="downloadreceipt()">
                         Download Receipt
@@ -866,14 +874,14 @@
                     <p id="fathername"></p>
                 </div>
 
-                <div class="row">
-                    <label>📚 Course :</label>
-                    <p id="course"></p>
-                </div>
 
                 <div class="row">
                     <label>Student ID No. :</label>
                     <p id="StuID"></p>
+                </div>
+                <div class="row">
+                    <label>📚 Course :</label>
+                    <p id="course"></p>
                 </div>
 
                 <div class="row">
@@ -1123,7 +1131,6 @@
 
     </div>
 
-
     <script>
 
         let oldstudent = false;
@@ -1247,7 +1254,8 @@
             if (Array.isArray(x.payments) && x.payments.length) {
 
                 return x.payments.reduce(
-                    (s, p) => s + (Number(p.received) || 0),
+                    (s, p) =>
+                        s + (Number(p.received) || 0),
                     0
                 );
 
@@ -1282,6 +1290,7 @@
 
         }
 
+
         function searchByID() {
 
             let id = $("studentID").value.trim();
@@ -1291,62 +1300,88 @@
             status.style.display = "none";
 
             if (!id) {
-
                 return;
-
             }
+
 
             let arr = JSON.parse(
                 localStorage.getItem("students")
             ) || [];
 
+
             let students = arr.filter(x =>
                 String(x.studentID || "").trim() == id
             );
 
+
             if (!students.length) {
 
                 status.style.display = "block";
+
                 status.style.background = "#fff3e0";
+
                 status.style.color = "brown";
+
                 status.innerText =
                     "New Student  Plese Enter Details";
 
+
                 $("t1").value = "";
+
                 $("t2").value = "";
+
                 $("currentremaining").value = "";
+
                 $("currentrow").style.display = "none";
 
+
                 oldstudent = false;
+
                 currentRecord = null;
 
                 return;
 
             }
+
+
             let course = getCourse();
+
 
             let found = students.find(x =>
                 String(x.course) == String(course)
             );
 
+
             if (!found) {
 
                 found = students[students.length - 1];
 
-                $("t1").value = found.name || "";
-                $("t2").value = found.father || "";
+
+                $("t1").value =
+                    found.name || "";
+
+                $("t2").value =
+                    found.father || "";
+
 
                 status.style.display = "block";
+
                 status.style.background = "#e8f5e9";
+
                 status.style.color = "seagreen";
 
+
                 status.innerText =
-                    "old student find plese Enter fees";
+                    "Student mila. ID permanent hai. Is course ka naya record banega.";
+
 
                 $("currentrow").style.display = "none";
+
                 $("currentremaining").value = "";
 
+
                 oldstudent = false;
+
                 currentRecord = null;
 
                 return;
@@ -1354,43 +1389,70 @@
             }
 
 
-            $("t1").value = found.name || "";
-            $("t2").value = found.father || "";
+            $("t1").value =
+                found.name || "";
 
-            $("studentID").value = found.studentID || id;
+            $("t2").value =
+                found.father || "";
+
+
+            $("studentID").value =
+                found.studentID || id;
+
 
             oldstudent = true;
+
             currentRecord = found;
 
-            oldremaining = getRemaining(found);
 
-            $("currentremaining").value = oldremaining;
+            oldremaining =
+                getRemaining(found);
 
-            $("currentrow").style.display = "table-row";
+
+            $("currentremaining").value =
+                oldremaining;
+
+
+            $("currentrow").style.display =
+                "table-row";
+
 
             status.style.display = "block";
-            status.style.background = "#e8f5e9";
-            status.style.color = "seagreen";
+
+            status.style.background =
+                "#e8f5e9";
+
+            status.style.color =
+                "seagreen";
+
 
             status.innerText =
                 "Old Student Found • Remaining Fees: Rs. " +
                 oldremaining;
 
         }
+
+
         function findstudent() {
 
-            let name = $("t1").value.trim().toLowerCase();
+            let name =
+                $("t1").value.trim().toLowerCase();
 
-            let father = $("t2").value.trim().toLowerCase();
+            let father =
+                $("t2").value.trim().toLowerCase();
 
-            let course = getCourse();
+            let course =
+                getCourse();
+
 
             if (!name || !father || !course)
                 return;
 
+
             let arr = JSON.parse(
                 localStorage.getItem("students")
             ) || [];
+
 
             let found = arr.find(x =>
                 String(x.name).trim().toLowerCase() == name &&
@@ -1398,182 +1460,300 @@
                 String(x.course) == course
             );
 
+
             if (!found) {
 
                 oldstudent = false;
+
                 oldremaining = 0;
+
                 currentRecord = null;
 
-                $("currentrow").style.display = "none";
-                $("currentremaining").value = "";
+
+                $("currentrow").style.display =
+                    "none";
+
+                $("currentremaining").value =
+                    "";
+
 
                 return;
 
             }
 
-            $("studentID").value = found.studentID || "";
+
+            $("studentID").value =
+                found.studentID || "";
+
 
             oldstudent = true;
+
             currentRecord = found;
 
-            oldremaining = getRemaining(found);
 
-            $("currentremaining").value = oldremaining;
+            oldremaining =
+                getRemaining(found);
 
-            $("currentrow").style.display = "table-row";
+
+            $("currentremaining").value =
+                oldremaining;
+
+
+            $("currentrow").style.display =
+                "table-row";
 
         }
+
+
         function calculate() {
 
             let c = getCourse();
+
 
             let pay = document.querySelector(
                 'input[name="payment"]:checked'
             );
 
-            let name = $("t1").value.trim();
 
-            let father = $("t2").value.trim();
+            let name =
+                $("t1").value.trim();
 
-            let id = $("studentID").value.trim();
+            let father =
+                $("t2").value.trim();
+
+            let id =
+                $("studentID").value.trim();
+
 
             if (!id) {
+
                 alert("Please enter Student ID No.");
+
                 return false;
+
             }
+
 
             if (!name || !father) {
-                alert("Please fill Student Name and Guardian Name");
+
+                alert(
+                    "Please fill Student Name and Guardian Name"
+                );
+
                 return false;
+
             }
 
+
             if (!c || !pay) {
+
                 alert("Please fill all fields");
+
                 return false;
+
             }
+
 
             let arr = JSON.parse(
                 localStorage.getItem("students")
             ) || [];
+
 
             let found = arr.find(x =>
                 String(x.studentID || "").trim() == id &&
                 String(x.course) == c
             );
 
-            let original = getFees(c);
-            let received = Number($("t5").value) || 0;
 
-            /*
-             * Existing student:
-             * Always use the fee/discount already saved for that student.
-             * Do not change the old record's fee limit just because the
-             * current Discount radio button is changed.
-             */
+            let original =
+                getFees(c);
+
+
+            let received =
+                Number($("t5").value) || 0;
+
+
             let recordDiscount = found
                 ? found.discount == "Yes"
                 : discountYes();
 
+
             let limit = found
                 ? getLimit(found)
-                : (recordDiscount
-                    ? getDiscountFees(c)
-                    : original);
+                : (
+                    recordDiscount
+                        ? getDiscountFees(c)
+                        : original
+                );
 
-            let paidBefore = found ? getPaid(found) : 0;
 
-            let remainBefore = Math.max(
-                0,
-                limit - paidBefore
-            );
+            let paidBefore =
+                found
+                    ? getPaid(found)
+                    : 0;
+
+
+            let remainBefore =
+                Math.max(
+                    0,
+                    limit - paidBefore
+                );
+
 
             if (found && remainBefore <= 0) {
-                alert("Aapki puri fees jama hai.");
+
+                alert(
+                    "Aapki puri fees jama hai."
+                );
+
                 showOldStudentReceipt(found);
+
                 return false;
+
             }
+
 
             if (received <= 0) {
-                alert("Please enter Fees Received");
+
+                alert(
+                    "Please enter Fees Received"
+                );
+
                 return false;
+
             }
 
-            /*
-             * Discount is allowed only for a new student/payment record.
-             * For an old student, continue with that student's already
-             * saved fee limit.
-             */
+
             if (
                 !found &&
                 recordDiscount &&
                 received != limit
             ) {
+
                 alert(
                     "Discount is available only when full fees of Rs. " +
                     limit +
                     " is paid at once."
                 );
+
                 return false;
+
             }
 
+
             if (received > remainBefore) {
+
                 alert(
                     "Fees Received cannot be greater than Current Remaining Fees"
                 );
+
                 return false;
+
             }
 
-            let remain = remainBefore - received;
 
-            $("studentname").innerHTML = name;
-            $("fathername").innerHTML = father;
-            $("course").innerHTML = c;
-            $("StuID").innerHTML = id;
+            let remain =
+                remainBefore - received;
+
+
+            $("studentname").innerHTML =
+                name;
+
+            $("fathername").innerHTML =
+                father;
+
+            $("course").innerHTML =
+                c;
+
+            $("StuID").innerHTML =
+                id;
+
 
             $("totalfees").innerHTML =
-                "Rs. " + original + " /-";
+                "Rs. " +
+                original +
+                " /-";
+
 
             if (recordDiscount) {
-                $("discountrow").style.display = "flex";
+
+                $("discountrow").style.display =
+                    "flex";
+
                 $("discountfees").innerHTML =
-                    "Rs. " + limit + " /-";
+                    "Rs. " +
+                    limit +
+                    " /-";
+
             } else {
-                $("discountrow").style.display = "none";
-                $("discountfees").innerHTML = "";
+
+                $("discountrow").style.display =
+                    "none";
+
+                $("discountfees").innerHTML =
+                    "";
+
             }
 
-            /*
-             * Show previous paid only when this is an old student and
-             * something was already paid before the current receipt.
-             */
+
             if (found && paidBefore > 0) {
-                $("previouspaidrow").style.display = "flex";
+
+                $("previouspaidrow").style.display =
+                    "flex";
+
                 $("previouspaid").innerHTML =
-                    "Rs. " + paidBefore + " /-";
+                    "Rs. " +
+                    paidBefore +
+                    " /-";
+
             } else {
-                $("previouspaidrow").style.display = "none";
-                $("previouspaid").innerHTML = "";
+
+                $("previouspaidrow").style.display =
+                    "none";
+
+                $("previouspaid").innerHTML =
+                    "";
+
             }
+
 
             $("paidfees").innerHTML =
-                "Rs. " + received +
-                " /- By " + pay.value;
+                "Rs. " +
+                received +
+                " /- By " +
+                pay.value;
+
 
             $("remaining").innerHTML =
-                "Rs. " + remain + " /-";
+                "Rs. " +
+                remain +
+                " /-";
 
-            $("currentremaining").value = remain;
+
+            $("currentremaining").value =
+                remain;
+
 
             if (!$("userdate").value)
                 setTodayDate();
 
-            let d = $("userdate").value.split("-");
+
+            let d =
+                $("userdate").value.split("-");
+
 
             $("date").value =
-                d[2] + "/" + d[1] + "/" + d[0];
+                d[2] +
+                "/" +
+                d[1] +
+                "/" +
+                d[0];
+
 
             return true;
+
         }
+
 
         function saveData() {
 
@@ -1581,129 +1761,238 @@
                 localStorage.getItem("students")
             ) || [];
 
+
             let pay = document.querySelector(
                 'input[name="payment"]:checked'
             );
 
-            let id = $("studentID").value.trim();
-            let name = $("t1").value.trim();
-            let father = $("t2").value.trim();
-            let course = $("t3").value;
 
-            let original = getFees(course);
-            let actual = Number($("t4").value) || 0;
-            let receivedNow = Number($("t5").value) || 0;
+            let id =
+                $("studentID").value.trim();
 
-            let index = arr.findIndex(x =>
-                String(x.studentID || "").trim() == id &&
-                String(x.course) == course
-            );
+            let name =
+                $("t1").value.trim();
 
-            let remain = Number(
-                $("remaining")
-                    .innerText
-                    .replace(/[^\d.-]/g, "")
-            ) || 0;
+            let father =
+                $("t2").value.trim();
+
+            let course =
+                $("t3").value;
+
+
+            let original =
+                getFees(course);
+
+
+            let actual =
+                Number($("t4").value) || 0;
+
+
+            let receivedNow =
+                Number($("t5").value) || 0;
+
+
+            let index =
+                arr.findIndex(x =>
+                    String(x.studentID || "").trim() == id &&
+                    String(x.course) == course
+                );
+
+
+            let remain =
+                Number(
+                    $("remaining")
+                        .innerText
+                        .replace(/[^\d.-]/g, "")
+                ) || 0;
+
 
             let payment = {
-                receipt: $("receiptno").value,
-                received: receivedNow,
-                payment: pay.value,
-                date: $("date").value,
-                remaining: remain
+
+                receipt:
+                    $("receiptno").value,
+
+                received:
+                    receivedNow,
+
+                payment:
+                    pay.value,
+
+                date:
+                    $("date").value,
+
+                remaining:
+                    remain
+
             };
+
 
             if (index >= 0) {
 
-                let x = arr[index];
+                let x =
+                    arr[index];
+
 
                 if (!Array.isArray(x.payments))
                     x.payments = [];
 
+
                 x.payments.push(payment);
 
-                x.studentID = id;
-                x.name = name;
-                x.father = father;
-                x.course = course;
 
-                /*
-                 * IMPORTANT:
-                 * Keep the original fee/discount settings of an old
-                 * student. This prevents View Data Remaining from becoming
-                 * 0 when a later payment is saved with another discount
-                 * radio selection.
-                 */
-                x.totalFees = Number(x.totalFees) || original;
+                x.studentID =
+                    id;
+
+                x.name =
+                    name;
+
+                x.father =
+                    father;
+
+                x.course =
+                    course;
+
+
+                x.totalFees =
+                    Number(x.totalFees) ||
+                    original;
+
 
                 if (x.discount == "Yes") {
+
                     x.discountFees =
                         Number(x.discountFees) ||
                         getDiscountFees(course);
+
                 } else {
-                    x.discount = "No";
+
+                    x.discount =
+                        "No";
+
                     x.discountFees =
-                        Number(x.totalFees) || original;
+                        Number(x.totalFees) ||
+                        original;
+
                 }
 
-                x.received = getPaid(x);
 
-                let savedLimit = getLimit(x);
+                x.received =
+                    getPaid(x);
 
-                x.remaining = Math.max(
-                    0,
-                    savedLimit - x.received
-                );
 
-                x.payment = pay.value;
-                x.date = $("date").value;
-                x.receipt = $("receiptno").value;
+                let savedLimit =
+                    getLimit(x);
 
-                arr[index] = x;
-                currentRecord = x;
+
+                x.remaining =
+                    Math.max(
+                        0,
+                        savedLimit -
+                        x.received
+                    );
+
+
+                x.payment =
+                    pay.value;
+
+                x.date =
+                    $("date").value;
+
+                x.receipt =
+                    $("receiptno").value;
+
+
+                arr[index] =
+                    x;
+
+
+                currentRecord =
+                    x;
 
             } else {
 
-                let recordDiscount = discountYes();
+                let recordDiscount =
+                    discountYes();
 
-                let limit = recordDiscount
-                    ? actual
-                    : original;
+
+                let limit =
+                    recordDiscount
+                        ? actual
+                        : original;
+
 
                 let obj = {
-                    studentID: id,
-                    receipt: $("receiptno").value,
-                    name: name,
-                    father: father,
-                    course: course,
-                    totalFees: original,
+
+                    studentID:
+                        id,
+
+                    receipt:
+                        $("receiptno").value,
+
+                    name:
+                        name,
+
+                    father:
+                        father,
+
+                    course:
+                        course,
+
+                    totalFees:
+                        original,
+
                     discountFees:
                         recordDiscount
                             ? actual
                             : original,
+
                     discount:
                         recordDiscount
                             ? "Yes"
                             : "No",
-                    received: receivedNow,
+
+                    received:
+                        receivedNow,
+
                     remaining:
-                        Math.max(0, limit - receivedNow),
-                    payment: pay.value,
-                    date: $("date").value,
-                    payments: [payment]
+                        Math.max(
+                            0,
+                            limit -
+                            receivedNow
+                        ),
+
+                    payment:
+                        pay.value,
+
+                    date:
+                        $("date").value,
+
+                    payments: [
+                        payment
+                    ]
+
                 };
 
+
                 arr.push(obj);
-                currentRecord = obj;
+
+                currentRecord =
+                    obj;
+
             }
+
 
             localStorage.setItem(
                 "students",
                 JSON.stringify(arr)
             );
 
-            currentSaved = true;
+
+            currentSaved =
+                true;
+
         }
+
 
         function prepareReceipt() {
 
@@ -1711,14 +2000,19 @@
                 return false;
 
 
-            $("container").style.display = "none";
+            $("container").style.display =
+                "none";
 
-            $("receipt").style.display = "block";
+
+            $("receipt").style.display =
+                "block";
 
 
             return true;
 
         }
+
+
         function downloadreceipt() {
 
             if (!prepareReceipt())
@@ -1738,14 +2032,19 @@
                 }
             ).then(canvas => {
 
-                let link = document.createElement("a");
+                let link =
+                    document.createElement("a");
 
-                link.href = canvas.toDataURL("image/png");
+
+                link.href =
+                    canvas.toDataURL("image/png");
+
 
                 link.download =
                     "Receipt-" +
                     $("receiptno").value +
                     ".png";
+
 
                 document.body.appendChild(link);
 
@@ -1756,6 +2055,8 @@
             });
 
         }
+
+
         function sharereceipt() {
 
             if (!prepareReceipt())
@@ -1776,153 +2077,287 @@
             ).then(canvas => {
 
                 canvas.toBlob(blob => {
-                    let file = new File(
-                        [blob],
-                        "Receipt-" + $("receiptno").value + ".png",
-                        {
-                            type: "image/png"
-                        }
-                    );
+
+                    let file =
+                        new File(
+                            [blob],
+                            "Receipt-" +
+                            $("receiptno").value +
+                            ".png",
+                            {
+                                type: "image/png"
+                            }
+                        );
+
+
                     if (
                         navigator.canShare &&
-                        navigator.canShare({ files: [file] })
+                        navigator.canShare({
+                            files: [file]
+                        })
                     ) {
+
                         navigator.share({
-                            title: "Echo Education Point",
+                            title:
+                                "Echo Education Point",
                             files: [file]
                         }).catch(() => { });
+
                     } else {
+
                         alert(
                             "Sharing files is not supported on this browser."
                         );
+
                     }
+
                 });
+
             });
+
         }
+
+
         function showOldStudentReceipt(x) {
 
-            $("container").style.display = "none";
-            $("data").style.display = "none";
-            $("receipt").style.display = "block";
+            $("container").style.display =
+                "none";
 
-            $("studentname").innerHTML = x.name || "";
-            $("fathername").innerHTML = x.father || "";
-            $("course").innerHTML = x.course || "";
-            $("StuID").innerHTML = x.studentID || "";
+            $("data").style.display =
+                "none";
+
+            $("receipt").style.display =
+                "block";
+
+
+            $("studentname").innerHTML =
+                x.name || "";
+
+            $("fathername").innerHTML =
+                x.father || "";
+
+            $("course").innerHTML =
+                x.course || "";
+
+            $("StuID").innerHTML =
+                x.studentID || "";
+
 
             $("totalfees").innerHTML =
-                "Rs. " + (x.totalFees || 0) + " /-";
+                "Rs. " +
+                (x.totalFees || 0) +
+                " /-";
 
-            let limit = getLimit(x);
+
+            let limit =
+                getLimit(x);
+
 
             if (x.discount == "Yes") {
-                $("discountrow").style.display = "flex";
+
+                $("discountrow").style.display =
+                    "flex";
+
                 $("discountfees").innerHTML =
-                    "Rs. " + limit + " /-";
+                    "Rs. " +
+                    limit +
+                    " /-";
+
             } else {
-                $("discountrow").style.display = "none";
-                $("discountfees").innerHTML = "";
+
+                $("discountrow").style.display =
+                    "none";
+
+                $("discountfees").innerHTML =
+                    "";
+
             }
+
 
             let payments =
                 Array.isArray(x.payments)
                     ? x.payments
                     : [];
 
-            let p = payments.length
-                ? payments[payments.length - 1]
-                : x;
 
-            let previousPaid = payments.length > 1
-                ? payments
-                    .slice(0, -1)
-                    .reduce(
-                        (s, item) =>
-                            s + (Number(item.received) || 0),
-                        0
-                    )
-                : 0;
+            let p =
+                payments.length
+                    ? payments[payments.length - 1]
+                    : x;
+
+
+            let previousPaid =
+                payments.length > 1
+                    ? payments
+                        .slice(0, -1)
+                        .reduce(
+                            (s, item) =>
+                                s +
+                                (Number(item.received) || 0),
+                            0
+                        )
+                    : 0;
+
 
             if (previousPaid > 0) {
-                $("previouspaidrow").style.display = "flex";
+
+                $("previouspaidrow").style.display =
+                    "flex";
+
                 $("previouspaid").innerHTML =
-                    "Rs. " + previousPaid + " /-";
+                    "Rs. " +
+                    previousPaid +
+                    " /-";
+
             } else {
-                $("previouspaidrow").style.display = "none";
-                $("previouspaid").innerHTML = "";
+
+                $("previouspaidrow").style.display =
+                    "none";
+
+                $("previouspaid").innerHTML =
+                    "";
+
             }
 
+
             $("paidfees").innerHTML =
-                "Rs. " + (p.received || 0) +
-                " /- By " + (p.payment || "");
+                "Rs. " +
+                (p.received || 0) +
+                " /- By " +
+                (p.payment || "");
+
 
             $("remaining").innerHTML =
-                "Rs. " + getRemaining(x) + " /-";
+                "Rs. " +
+                getRemaining(x) +
+                " /-";
+
 
             $("receiptno").value =
-                p.receipt || x.receipt || "";
+                p.receipt ||
+                x.receipt ||
+                "";
+
 
             $("date").value =
-                p.date || x.date || "";
+                p.date ||
+                x.date ||
+                "";
+
         }
 
+
         function viewdata() {
-            currentFilter = "All";
-            $("container").style.display = "none";
-            $("receipt").style.display = "none";
-            $("paymenthistory").style.display = "none";
-            $("studenttablebox").style.display = "block";
-            document.querySelectorAll(".filter")
-                .forEach(b => b.classList.remove("active"));
-            document.querySelector(".filter")
+
+            currentFilter =
+                "All";
+
+
+            $("container").style.display =
+                "none";
+
+
+            $("receipt").style.display =
+                "none";
+
+
+            $("paymenthistory").style.display =
+                "none";
+
+
+            $("studenttablebox").style.display =
+                "block";
+
+
+            document
+                .querySelectorAll(".filter")
+                .forEach(b =>
+                    b.classList.remove("active")
+                );
+
+
+            document
+                .querySelector(".filter")
                 .classList.add("active");
+
+
             renderData("All");
-            $("data").style.display = "block";
+
+
+            $("data").style.display =
+                "block";
+
+
             $("data").scrollIntoView({
                 behavior: "smooth"
             });
 
         }
+
+
         function filterCourse(filter, button) {
-            currentFilter = filter;
-            $("paymenthistory").style.display = "none";
-            $("studenttablebox").style.display = "block";
-            document.querySelectorAll(".filter")
-                .forEach(b => b.classList.remove("active"));
+
+            currentFilter =
+                filter;
+
+
+            $("paymenthistory").style.display =
+                "none";
+
+
+            $("studenttablebox").style.display =
+                "block";
+
+
+            document
+                .querySelectorAll(".filter")
+                .forEach(b =>
+                    b.classList.remove("active")
+                );
+
+
             button.classList.add("active");
+
+
             renderData(filter);
 
         }
 
+
         function renderData(filter) {
 
-            let arr = JSON.parse(
-                localStorage.getItem("students")
-            ) || [];
+            let arr =
+                JSON.parse(
+                    localStorage.getItem("students")
+                ) || [];
 
 
-            let filtered = arr.filter(x =>
+            let filtered =
+                arr.filter(x =>
 
-                filter == "Discount"
-                    ? x.discount == "Yes"
-                    :
-                    filter == "All" ||
-                    x.course == filter
+                    filter == "Discount"
+                        ? x.discount == "Yes"
+                        :
+                        filter == "All" ||
+                        x.course == filter
 
-            );
+                );
 
 
-            $("datatable").innerHTML = "";
+            $("datatable").innerHTML =
+                "";
 
 
             if (!filtered.length) {
 
                 $("datatable").innerHTML = `
-        <tr>
-            <td colspan="11">
-                No Student Data Found
-            </td>
-        </tr>`;
+                <tr>
+                    <td colspan="11">
+                        No Student Data Found
+                    </td>
+                </tr>
+            `;
+
 
                 updateStudentSummary([]);
 
@@ -1933,26 +2368,47 @@
 
             filtered.forEach(x => {
 
-                let totalPaid = getPaid(x);
+                let totalPaid =
+                    getPaid(x);
+
 
                 let latest =
-                    Array.isArray(x.payments) && x.payments.length
+                    Array.isArray(x.payments) &&
+                        x.payments.length
                         ? x.payments[x.payments.length - 1]
                         : x;
 
 
-                let total = getLimit(x);
+                let total =
+                    getLimit(x);
 
-                let remain = getRemaining(x);
+
+                let remain =
+                    getRemaining(x);
 
 
-                let n = encodeURIComponent(x.name || "");
+                let n =
+                    encodeURIComponent(
+                        x.name || ""
+                    );
 
-                let f = encodeURIComponent(x.father || "");
 
-                let c = encodeURIComponent(x.course || "");
+                let f =
+                    encodeURIComponent(
+                        x.father || ""
+                    );
 
-                let r = encodeURIComponent(x.receipt || "");
+
+                let c =
+                    encodeURIComponent(
+                        x.course || ""
+                    );
+
+
+                let r =
+                    encodeURIComponent(
+                        x.receipt || ""
+                    );
 
 
                 let count =
@@ -1961,77 +2417,100 @@
                         : 1;
 
 
-                let btn = count > 1
+                let btn =
+                    count > 1
 
-                    ? `
+                        ? `
 
-        <button class="oldreceipt"
-        onclick="viewPaymentReceipt(
-            '${n}',
-            '${f}',
-            '${c}'
-        )">
-        Receipts
-        </button>
+                        <button
+                        class="oldreceipt"
+                        onclick="viewPaymentReceipt(
+                            '${n}',
+                            '${f}',
+                            '${c}'
+                        )">
+                            Receipts
+                        </button>
 
-        `
+                    `
 
-                    : `
+                        :
 
-        <button class="oldreceipt"
-        onclick="viewPaymentReceipt(
-            '${n}',
-            '${f}',
-            '${c}',
-            '${r}'
-        )">
-        Receipt
-        </button>
+                        `
 
-        `;
+                        <button
+                        class="oldreceipt"
+                        onclick="viewPaymentReceipt(
+                            '${n}',
+                            '${f}',
+                            '${c}',
+                            '${r}'
+                        )">
+                            Receipt
+                        </button>
+
+                    `;
 
 
                 let del = `
 
-        <button class="delete"
-        onclick="deleteStudent(
-            '${encodeURIComponent(x.studentID || "")}',
-            '${n}',
-            '${f}',
-            '${c}'
-        )">
-        Delete
-        </button>
+                <button
+                class="delete"
+                onclick="deleteStudent(
+                    '${encodeURIComponent(x.studentID || "")}',
+                    '${n}',
+                    '${f}',
+                    '${c}'
+                )">
+                    Delete
+                </button>
 
-        `;
+            `;
 
 
                 $("datatable").innerHTML += `
 
-        <tr>
+                <tr>
 
-            <td>${x.studentID || ""}</td>
+                    <td>
+                        ${x.studentID || ""}
+                    </td>
 
-            <td>${x.name || ""}</td>
+                    <td>
+                        ${x.name || ""}
+                    </td>
 
-            <td>${x.father || ""}</td>
+                    <td>
+                        ${x.father || ""}
+                    </td>
 
-            <td>${x.course || ""}</td>
+                    <td>
+                        ${x.course || ""}
+                    </td>
 
-            <td>Rs. ${total}</td>
+                    <td>
+                        Rs. ${total}
+                    </td>
 
-            <td>Rs. ${totalPaid}</td>
+                    <td>
+                        Rs. ${totalPaid}
+                    </td>
 
-            <td>Rs. ${remain}</td>
+                    <td>
+                        Rs. ${remain}
+                    </td>
 
-            
-            <td>${btn}</td>
+                    <td>
+                        ${btn}
+                    </td>
 
-            <td>${del}</td>
+                    <td>
+                        ${del}
+                    </td>
 
-        </tr>
+                </tr>
 
-        `;
+            `;
 
             });
 
@@ -2039,6 +2518,8 @@
             updateStudentSummary(filtered);
 
         }
+
+
         function updateStudentSummary(arr) {
 
             let total = 0;
@@ -2052,7 +2533,9 @@
 
             arr.forEach(x => {
 
-                total += getLimit(x);
+                total +=
+                    getLimit(x);
+
 
                 if (x.discount == "Yes") {
 
@@ -2062,26 +2545,39 @@
 
                 }
 
-                paid += getPaid(x);
 
-                rem += getRemaining(x);
+                paid +=
+                    getPaid(x);
+
+
+                rem +=
+                    getRemaining(x);
 
             });
 
 
             $("summaryTotal").innerHTML =
-                "Rs. " + total;
+                "Rs. " +
+                total;
+
 
             $("summaryDiscount").innerHTML =
-                "Rs. " + discount;
+                "Rs. " +
+                discount;
+
 
             $("summaryPaid").innerHTML =
-                "Rs. " + paid;
+                "Rs. " +
+                paid;
+
 
             $("summaryRemaining").innerHTML =
-                "Rs. " + rem;
+                "Rs. " +
+                rem;
 
         }
+
+
         function deleteStudent(
             id,
             name,
@@ -2089,37 +2585,58 @@
             course
         ) {
 
-            id = decodeURIComponent(id);
+            id =
+                decodeURIComponent(id);
 
-            name = decodeURIComponent(name);
+            name =
+                decodeURIComponent(name);
 
-            father = decodeURIComponent(father);
+            father =
+                decodeURIComponent(father);
 
-            course = decodeURIComponent(course);
+            course =
+                decodeURIComponent(course);
 
 
             if (!confirm(
                 "Is student ka pura record delete karna hai?"
             )) {
+
                 return;
+
             }
 
 
-            let arr = JSON.parse(
-                localStorage.getItem("students")
-            ) || [];
+            let arr =
+                JSON.parse(
+                    localStorage.getItem("students")
+                ) || [];
 
 
-            arr = arr.filter(x =>
-                !(
-                    String(x.studentID || "") == id &&
-                    String(x.name).trim().toLowerCase() ==
-                    name.trim().toLowerCase() &&
-                    String(x.father).trim().toLowerCase() ==
-                    father.trim().toLowerCase() &&
-                    String(x.course) == course
-                )
-            );
+            arr =
+                arr.filter(x =>
+                    !(
+                        String(x.studentID || "") ==
+                        id &&
+
+                        String(x.name)
+                            .trim()
+                            .toLowerCase() ==
+                        name
+                            .trim()
+                            .toLowerCase() &&
+
+                        String(x.father)
+                            .trim()
+                            .toLowerCase() ==
+                        father
+                            .trim()
+                            .toLowerCase() &&
+
+                        String(x.course) ==
+                        course
+                    )
+                );
 
 
             localStorage.setItem(
@@ -2131,6 +2648,8 @@
             renderData(currentFilter);
 
         }
+
+
         function viewPaymentReceipt(
             name,
             father,
@@ -2138,251 +2657,574 @@
             receiptValue
         ) {
 
-            name = decodeURIComponent(name);
+            name =
+                decodeURIComponent(name);
 
-            father = decodeURIComponent(father);
+            father =
+                decodeURIComponent(father);
 
-            courseValue = decodeURIComponent(courseValue);
+            courseValue =
+                decodeURIComponent(courseValue);
 
 
             if (receiptValue)
-                receiptValue = decodeURIComponent(receiptValue);
+                receiptValue =
+                    decodeURIComponent(receiptValue);
 
 
-            let arr = JSON.parse(
-                localStorage.getItem("students")
-            ) || [];
+            let arr =
+                JSON.parse(
+                    localStorage.getItem("students")
+                ) || [];
 
 
-            let student = arr.find(x =>
+            let student =
+                arr.find(x =>
 
-                String(x.name).trim().toLowerCase() ==
-                name.trim().toLowerCase()
+                    String(x.name)
+                        .trim()
+                        .toLowerCase() ==
 
-                &&
-                String(x.father).trim().toLowerCase() ==
-                father.trim().toLowerCase()
-                &&
-                String(x.course) == courseValue
-            );
-            if (!student) return;
+                    name
+                        .trim()
+                        .toLowerCase()
+
+                    &&
+
+                    String(x.father)
+                        .trim()
+                        .toLowerCase() ==
+
+                    father
+                        .trim()
+                        .toLowerCase()
+
+                    &&
+
+                    String(x.course) ==
+                    courseValue
+
+                );
+
+
+            if (!student)
+                return;
+
+
             if (
                 !Array.isArray(student.payments) ||
                 student.payments.length <= 1
             ) {
+
                 if (
                     Array.isArray(student.payments) &&
                     student.payments.length == 1
                 ) {
+
                     showPaymentReceipt(
                         student,
                         student.payments[0]
                     );
+
                 } else {
-                    showOldStudentReceipt(student);
+
+                    showOldStudentReceipt(
+                        student
+                    );
+
                 }
+
                 return;
+
             }
+
+
             if (receiptValue) {
-                let p = student.payments.find(p =>
-                    String(p.receipt) == receiptValue
-                );
+
+                let p =
+                    student.payments.find(p =>
+                        String(p.receipt) ==
+                        receiptValue
+                    );
+
+
                 if (p)
-                    showPaymentReceipt(student, p);
+                    showPaymentReceipt(
+                        student,
+                        p
+                    );
+
                 return;
+
             }
-            showPaymentHistory(student);
+
+
+            showPaymentHistory(
+                student
+            );
+
         }
+
+
         function showPaymentHistory(student) {
-            $("container").style.display = "none";
-            $("receipt").style.display = "none";
-            $("data").style.display = "block";
-            $("studenttablebox").style.display = "none";
-            $("paymenthistory").style.display = "block";
-            $("paymenttable").innerHTML = "";
+
+            $("container").style.display =
+                "none";
+
+
+            $("receipt").style.display =
+                "none";
+
+
+            $("data").style.display =
+                "block";
+
+
+            $("studenttablebox").style.display =
+                "none";
+
+
+            $("paymenthistory").style.display =
+                "block";
+
+
+            $("paymenttable").innerHTML =
+                "";
+
+
             student.payments.forEach(p => {
+
                 $("paymenttable").innerHTML += `
-        <tr>
-            <td>${p.receipt || ""}</td>
-            <td>Rs. ${p.received || 0}</td>
-            <td>${p.payment || ""}</td>
-            <td>${p.date || ""}</td>
-            <td>
-                <button
-                class="paymentreceipt"
-                onclick="viewPaymentReceipt(
-                    '${encodeURIComponent(student.name)}',
-                    '${encodeURIComponent(student.father)}',
-                    '${encodeURIComponent(student.course)}',
-                    '${encodeURIComponent(p.receipt || "")}'
-                )">
-                Receipt
-                </button>
-                </td>
-           </tr>
-         `;
+
+                <tr>
+
+                    <td>
+                        ${p.receipt || ""}
+                    </td>
+
+                    <td>
+                        Rs. ${p.received || 0}
+                    </td>
+
+                    <td>
+                        ${p.payment || ""}
+                    </td>
+
+                    <td>
+                        ${p.date || ""}
+                    </td>
+
+                    <td>
+
+                        <button
+                        class="paymentreceipt"
+                        onclick="viewPaymentReceipt(
+                            '${encodeURIComponent(student.name)}',
+                            '${encodeURIComponent(student.father)}',
+                            '${encodeURIComponent(student.course)}',
+                            '${encodeURIComponent(p.receipt || "")}'
+                        )">
+
+                            Receipt
+
+                        </button>
+
+                    </td>
+
+                </tr>
+
+            `;
+
             });
+
+
             $("data").scrollIntoView({
                 behavior: "smooth"
             });
-        }
-        function closepaymenthistory() {
-            $("paymenthistory").style.display = "none";
-            $("studenttablebox").style.display = "block";
-            renderData(currentFilter);
-        }
-        function showPaymentReceipt(student, payment) {
 
-            $("container").style.display = "none";
-            $("data").style.display = "none";
-            $("receipt").style.display = "block";
+        }
+
+
+        function closepaymenthistory() {
+
+            $("paymenthistory").style.display =
+                "none";
+
+
+            $("studenttablebox").style.display =
+                "block";
+
+
+            renderData(
+                currentFilter
+            );
+
+        }
+
+
+        /*
+         * VIEW DATA RECEIPT FIX
+         *
+         * Yahan saved payment.remaining ko use nahi kiya gaya.
+         * Current receipt tak ki payment history se
+         * Remaining dobara calculate hota hai.
+         */
+
+        function showPaymentReceipt(
+            student,
+            payment
+        ) {
+
+            $("container").style.display =
+                "none";
+
+
+            $("data").style.display =
+                "none";
+
+
+            $("receipt").style.display =
+                "block";
+
 
             $("studentname").innerHTML =
                 student.name || "";
 
+
             $("fathername").innerHTML =
                 student.father || "";
+
 
             $("course").innerHTML =
                 student.course || "";
 
+
             $("StuID").innerHTML =
                 student.studentID || "";
 
+
             $("totalfees").innerHTML =
                 "Rs. " +
-                (student.totalFees || 0) +
+                (
+                    Number(student.totalFees) ||
+                    getFees(student.course)
+                ) +
                 " /-";
 
-            let limit = getLimit(student);
+
+            let limit =
+                getLimit(student);
+
 
             if (student.discount == "Yes") {
-                $("discountrow").style.display = "flex";
+
+                $("discountrow").style.display =
+                    "flex";
+
+
                 $("discountfees").innerHTML =
                     "Rs. " +
                     limit +
                     " /-";
+
             } else {
-                $("discountrow").style.display = "none";
-                $("discountfees").innerHTML = "";
+
+                $("discountrow").style.display =
+                    "none";
+
+
+                $("discountfees").innerHTML =
+                    "";
+
             }
 
+
             /*
-             * Previous Paid = all payments before the payment whose
-             * receipt is currently being viewed.
+             * Payment history
              */
+
             let payments =
                 Array.isArray(student.payments)
                     ? student.payments
                     : [];
 
-            let paymentIndex = payments.findIndex(p =>
-                String(p.receipt || "") ==
-                String(payment.receipt || "")
-            );
+
+            /*
+             * Current receipt ka index
+             */
+
+            let paymentIndex =
+                payments.findIndex(p =>
+                    String(p.receipt || "") ==
+                    String(payment.receipt || "")
+                );
+
+
+            /*
+             * Current receipt se pehle
+             * total paid
+             */
 
             let previousPaid = 0;
 
+
             if (paymentIndex > 0) {
-                previousPaid = payments
-                    .slice(0, paymentIndex)
-                    .reduce(
-                        (s, item) =>
-                            s + (Number(item.received) || 0),
-                        0
-                    );
+
+                previousPaid =
+                    payments
+                        .slice(0, paymentIndex)
+                        .reduce(
+                            (sum, item) =>
+                                sum +
+                                (
+                                    Number(item.received) ||
+                                    0
+                                ),
+                            0
+                        );
+
             }
 
-            if (previousPaid > 0) {
-                $("previouspaidrow").style.display = "flex";
-                $("previouspaid").innerHTML =
-                    "Rs. " + previousPaid + " /-";
-            } else {
-                $("previouspaidrow").style.display = "none";
-                $("previouspaid").innerHTML = "";
-            }
 
             /*
-             * Use the saved remaining amount for the exact payment receipt.
-             * This is the amount that was remaining immediately after that
-             * payment was made.
+             * Previous Paid row
              */
+
+            if (previousPaid > 0) {
+
+                $("previouspaidrow").style.display =
+                    "flex";
+
+
+                $("previouspaid").innerHTML =
+                    "Rs. " +
+                    previousPaid +
+                    " /-";
+
+            } else {
+
+                $("previouspaidrow").style.display =
+                    "none";
+
+
+                $("previouspaid").innerHTML =
+                    "";
+
+            }
+
+
+            /*
+             * Current payment
+             */
+
+            let currentPaid =
+                Number(payment.received) || 0;
+
+
+            /*
+             * Current receipt tak total paid
+             */
+
+            let totalPaidTillThisReceipt =
+                previousPaid +
+                currentPaid;
+
+
+            /*
+             * ACTUAL REMAINING
+             *
+             * Saved payment.remaining ko use nahi karenge.
+             */
+
             let paymentRemaining =
-                payment.remaining !== undefined
-                    ? Number(payment.remaining)
-                    : Math.max(
-                        0,
-                        limit -
-                        (
-                            previousPaid +
-                            (Number(payment.received) || 0)
-                        )
-                    );
+                Math.max(
+                    0,
+                    limit -
+                    totalPaidTillThisReceipt
+                );
+
+
+            /*
+             * Received Amount
+             */
 
             $("paidfees").innerHTML =
                 "Rs. " +
-                (payment.received || 0) +
+                currentPaid +
                 " /- By " +
                 (payment.payment || "");
+
+
+            /*
+             * Remaining Fees
+             */
 
             $("remaining").innerHTML =
                 "Rs. " +
                 paymentRemaining +
                 " /-";
 
+
+            /*
+             * Receipt Number
+             */
+
             $("receiptno").value =
                 payment.receipt || "";
 
+
+            /*
+             * Date
+             */
+
             $("date").value =
                 payment.date || "";
+
         }
 
+
         function closedata() {
-            $("data").style.display = "none";
-            $("paymenthistory").style.display = "none";
-            $("studenttablebox").style.display = "block";
-            $("container").style.display = "block";
-            $("receipt").style.display = "none";
+
+            $("data").style.display =
+                "none";
+
+
+            $("paymenthistory").style.display =
+                "none";
+
+
+            $("studenttablebox").style.display =
+                "block";
+
+
+            $("container").style.display =
+                "block";
+
+
+            $("receipt").style.display =
+                "none";
+
+
             $("container").scrollIntoView({
                 behavior: "smooth"
             });
+
         }
+
+
         function resetform() {
-            $("t1").value = "";
-            $("t2").value = "";
-            $("t3").value = "";
-            $("studentID").value = "";
-            $("t5").value = "";
-            $("currentremaining").value = "";
-            $("currentrow").style.display = "none";
-            $("previouspaidrow").style.display = "none";
-            $("previouspaid").innerHTML = "";
-            $("studentstatus").style.display = "none";
-            oldstudent = false;
-            oldremaining = 0;
-            currentRecord = null;
-            currentSaved = false;
+
+            $("t1").value =
+                "";
+
+            $("t2").value =
+                "";
+
+            $("t3").value =
+                "";
+
+            $("studentID").value =
+                "";
+
+            $("t5").value =
+                "";
+
+            $("currentremaining").value =
+                "";
+
+            $("currentrow").style.display =
+                "none";
+
+
+            $("previouspaidrow").style.display =
+                "none";
+
+
+            $("previouspaid").innerHTML =
+                "";
+
+
+            $("studentstatus").style.display =
+                "none";
+
+
+            oldstudent =
+                false;
+
+
+            oldremaining =
+                0;
+
+
+            currentRecord =
+                null;
+
+
+            currentSaved =
+                false;
+
+
             document.querySelector(
                 'input[name="discount"][value="Yes"]'
-            ).checked = false;
+            ).checked =
+                false;
+
+
             document.querySelector(
                 'input[name="discount"][value="No"]'
-            ).checked = true;
+            ).checked =
+                true;
+
+
             document.querySelector(
                 'input[name="course"][value="BCA First Year"]'
-            ).checked = true;
+            ).checked =
+                true;
+
+
             document.querySelector(
                 'input[name="payment"][value="Cash"]'
-            ).checked = true;
-            $("receipt").style.display = "none";
-            $("container").style.display = "block";
-            $("data").style.display = "none";
-            $("paymenthistory").style.display = "none";
-            $("studenttablebox").style.display = "block";
+            ).checked =
+                true;
+
+
+            $("receipt").style.display =
+                "none";
+
+
+            $("container").style.display =
+                "block";
+
+
+            $("data").style.display =
+                "none";
+
+
+            $("paymenthistory").style.display =
+                "none";
+
+
+            $("studenttablebox").style.display =
+                "block";
+
+
             randomno();
+
             setTodayDate();
+
             setfees();
+
         }
+        function saveonlyserver() {
+            if (!prepareReceipt())
+                return;
+
+
+            if (!currentSaved)
+                saveData();
+
+
+        }     
     </script>
 </body>
 
