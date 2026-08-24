@@ -1,0 +1,2331 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@700&family=Pacifico&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background: whitesmoke;
+            padding: 30px;
+            overflow-x: hidden;
+        }
+
+        #container,
+        #data {
+            width: 900px;
+            max-width: 100%;
+            margin: 0 auto 20px;
+            background: white;
+            padding: 25px 30px;
+            border: 2px solid midnightblue;
+            border-radius: 12px;
+        }
+
+        #container table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        #container td {
+            padding: 8px;
+            font-size: 17px;
+            font-weight: bold;
+            color: midnightblue;
+        }
+
+        #container td:first-child {
+            width: 35%;
+        }
+
+        #container input {
+            width: 100%;
+            height: 40px;
+            padding: 7px 10px;
+            border: 1px solid darkgray;
+            border-radius: 6px;
+            outline: none;
+            font-size: 16px;
+        }
+
+        #container input[type=radio] {
+            width: auto;
+            height: auto;
+            padding: 0;
+            margin: 0 5px 0 0;
+            vertical-align: middle;
+        }
+
+        #container input:focus {
+            border: 2px solid midnightblue;
+        }
+
+        #currentrow {
+            display: none;
+        }
+
+        #actionbuttons {
+            padding-top: 18px;
+        }
+
+        #actionbuttons button {
+            width: 23%;
+            height: 45px;
+            border: 0;
+            border-radius: 7px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            margin: 0 .5%;
+        }
+
+        .reset {
+            background: lightgray;
+            color: #222
+        }
+
+        .download {
+            background: firebrick;
+            color: white
+        }
+
+        .share {
+            background: seagreen;
+            color: white
+        }
+
+        .view {
+            background: midnightblue;
+            color: white
+        }
+
+        .idsearchbox {
+            display: flex;
+            gap: 8px;
+        }
+
+        .idsearchbox input {
+            flex: 1;
+        }
+
+        .idsearch {
+            width: 100px !important;
+            height: 40px;
+            border: 0;
+            border-radius: 6px;
+            background: midnightblue;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        #studentstatus {
+            display: none;
+            margin-top: 5px;
+            padding: 6px 10px;
+            border-radius: 5px;
+            font-size: 13px;
+            background: #e8f5e9;
+            color: seagreen;
+        }
+
+        .receipt-wrap {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .receipt {
+            width: 700px;
+            min-width: 700px;
+            background: white;
+            border: 8px solid midnightblue;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .echo {
+            padding: 15px 20px 12px;
+            border-bottom: 5px solid gold;
+        }
+
+        .brand {
+            text-align: center
+        }
+
+        .brand h1 {
+            font-size: 60px;
+            color: midnightblue;
+            white-space: nowrap;
+            text-shadow: 2px 2px 0 lightgray, 4px 4px 0 lightsteelblue, 6px 6px 10px rgba(0, 0, 0, .25);
+        }
+
+        .brand h1 span {
+            color: firebrick
+        }
+
+        .echo>p {
+            margin: 10px auto 0;
+            width: fit-content;
+            max-width: 100%;
+            padding: 7px 14px;
+            background: midnightblue;
+            color: white;
+            border: 2px solid gold;
+            border-radius: 20px;
+            font-size: 15px;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        .address {
+            margin-top: 8px;
+            font-size: 16px;
+            color: midnightblue;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        .rece {
+            width: 94%;
+            margin: 12px auto;
+            border-collapse: collapse;
+        }
+
+        .rece td {
+            padding: 5px 3px;
+            font-size: 14px;
+            font-weight: bold;
+            color: midnightblue;
+            text-align: center;
+        }
+
+        .rece td:first-child,
+        .rece td:nth-child(4) {
+            text-align: right;
+        }
+
+        .rece input {
+            width: 110px;
+            border: 0;
+            outline: none;
+            background: transparent;
+            color: midnightblue;
+            font-size: 19px;
+            font-weight: bold;
+        }
+
+        #title {
+            display: block;
+            width: fit-content;
+            margin: auto;
+            padding: 7px 18px;
+            background: midnightblue;
+            color: white;
+            border: 2px solid gold;
+            border-radius: 20px;
+            font-size: 17px;
+            font-weight: bold;
+            text-align: center;
+            white-space: nowrap;
+        }
+
+        .form {
+            margin: 8px 25px;
+            padding: 18px 20px;
+            border: 2px solid midnightblue;
+            border-radius: 12px;
+        }
+
+        .row {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .row label {
+            width: 175px;
+            font-size: 16px;
+            font-weight: bold;
+            color: midnightblue;
+        }
+
+        .row p {
+            flex: 1;
+            min-height: 34px;
+            padding: 6px 8px;
+            border-bottom: 1px dotted dimgray;
+            font-size: 16px;
+            font-weight: bold;
+            color: #111;
+        }
+
+        #totalfees,
+        #discountfees,
+        #paidfees,
+        #remaining {
+            font-size: 19px;
+            font-weight: bold;
+        }
+
+        #discountfees {
+            color: firebrick
+        }
+
+        #paidfees {
+            color: seagreen
+        }
+
+        #remaining {
+            color: brown
+        }
+
+        .motivation {
+            margin: 8px 20px 5px;
+            padding: 5px;
+            text-align: center;
+            color: brown;
+            font-family: Caveat, cursive;
+            font-size: 17px;
+            font-weight: bold;
+        }
+
+        .bottom {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 25px;
+            border-top: 4px solid gold;
+        }
+
+        .future {
+            width: 190px;
+            text-align: center;
+        }
+
+        .invest {
+            font-family: Pacifico, Caveat, cursive;
+            font-size: 12px;
+            line-height: 1;
+            color: midnightblue;
+        }
+
+        .mainheading {
+            font-family: Pacifico, cursive;
+            font-size: 20px;
+            line-height: 1;
+            color: midnightblue;
+        }
+
+        .futuretext {
+            font-family: Pacifico, cursive;
+            font-size: 27px;
+            line-height: 1;
+            color: firebrick;
+        }
+
+        .booksection {
+            display: flex;
+            align-items: center;
+            width: 100%;
+            margin: 2px 0;
+        }
+
+        .line {
+            height: 2px;
+            background: darkgoldenrod;
+            flex: 1;
+        }
+
+        .bookicon {
+            text-align: center
+        }
+
+        .star {
+            color: darkgoldenrod;
+            font-size: 10px
+        }
+
+        .seal {
+            width: 120px;
+            height: 120px;
+            background: gold;
+            border-radius: 50%;
+            padding: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .sealinside {
+            width: 100%;
+            height: 100%;
+            border: 2px dashed midnightblue;
+            border-radius: 50%;
+            background: midnightblue;
+            color: white;
+            text-align: center;
+            padding-top: 25px;
+        }
+
+        .sealinside p {
+            font-size: 14px;
+            font-weight: bold;
+            line-height: 1.2;
+        }
+
+        .sealinside p span {
+            color: gold
+        }
+
+        .sealstar {
+            color: gold;
+            font-size: 10px;
+            margin-top: 2px;
+        }
+
+        .director {
+            width: 190px;
+            color: midnightblue;
+            text-align: left;
+        }
+
+        .director h3 {
+            display: inline-block;
+            padding: 4px 8px;
+            background: midnightblue;
+            color: white;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+
+        .director h2 {
+            margin-top: 4px;
+            color: brown;
+            font-size: 20px;
+        }
+
+        .director p {
+            margin-top: 3px;
+            font-size: 16px;
+            font-weight: bold;
+        }
+
+        .thank {
+            padding: 8px;
+            background: midnightblue;
+            color: white;
+            text-align: center;
+            font-size: 19px;
+            font-weight: bold;
+        }
+
+        #data {
+            display: none;
+            padding: 20px;
+        }
+
+        #data h2 {
+            text-align: center;
+            color: midnightblue;
+            margin-bottom: 15px;
+        }
+
+        .summarybox {
+            width: 100%;
+            margin-bottom: 15px;
+        }
+
+        .summary {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .summary td {
+            border: 1px solid gray;
+            padding: 10px 5px;
+            text-align: center;
+            font-weight: bold;
+        }
+
+        .summary td div:first-child {
+            color: midnightblue;
+            font-size: 14px;
+            margin-bottom: 5px;
+        }
+
+        .summary td div:last-child {
+            font-size: 18px;
+        }
+
+        .filters {
+            display: flex;
+            gap: 7px;
+            flex-wrap: wrap;
+            margin-bottom: 15px;
+        }
+
+        .filter {
+            flex: 1;
+            min-width: 110px;
+            height: 40px;
+            border: 0;
+            border-radius: 6px;
+            background: lightgray;
+            color: #222;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .filter.active {
+            background: midnightblue;
+            color: white;
+        }
+
+        .tablebox {
+            width: 100%;
+            overflow: hidden;
+        }
+
+        #data table.data-table {
+            width: 100%;
+            border-collapse: collapse;
+            table-layout: fixed;
+        }
+
+        #data th,
+        #data td {
+            border: 1px solid gray;
+            padding: 7px 5px;
+            text-align: center;
+            font-size: 13px;
+            white-space: normal;
+            word-break: break-word;
+        }
+
+        #data th {
+            background: midnightblue;
+            color: white;
+        }
+
+        #data tr:nth-child(even) {
+            background: #f5f5f5;
+        }
+
+        .delete,
+        .oldreceipt,
+        .paymentreceipt {
+            color: white;
+            border: 0;
+            padding: 5px 8px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .delete {
+            background: firebrick
+        }
+
+        .oldreceipt,
+        .paymentreceipt {
+            background: seagreen
+        }
+
+        .closeview {
+            margin-top: 15px;
+            width: 100%;
+            height: 40px;
+            background: midnightblue;
+            color: white;
+            border: 0;
+            border-radius: 6px;
+            font-size: 15px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        #paymenthistory {
+            display: none;
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 2px solid midnightblue;
+        }
+
+        #paymenthistory h2 {
+            color: midnightblue;
+            text-align: center;
+            margin-bottom: 15px;
+        }
+
+        @media(max-width:768px) {
+            body {
+                padding: 8px
+            }
+
+            #container {
+                width: 100%;
+                padding: 15px 10px;
+            }
+
+            #container td {
+                display: block;
+                width: 100%;
+                padding: 5px 0;
+            }
+
+            #container td:first-child {
+                width: 100%;
+            }
+
+            #actionbuttons {
+                padding-top: 10px;
+            }
+
+            #actionbuttons button {
+                width: 100%;
+                margin: 0 0 8px;
+            }
+
+            .receipt-wrap {
+                display: block;
+                overflow: hidden;
+                padding-top: 50px;
+            }
+
+            .receipt {
+                width: 700px;
+                min-width: 700px;
+                transform: scale(.45);
+                transform-origin: top left;
+                margin: 0 0 -385px;
+            }
+
+            #data {
+                width: 100%;
+                padding: 12px;
+                overflow: hidden;
+            }
+
+            .summarybox {
+                overflow-x: auto;
+                padding-bottom: 5px;
+            }
+
+            .summary {
+                width: max-content;
+                min-width: 680px;
+            }
+
+            .summary td {
+                width: 170px;
+                min-width: 170px;
+                white-space: nowrap;
+            }
+
+            .filters {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .filter:last-child {
+                grid-column: 1/3;
+            }
+
+            .tablebox {
+                overflow-x: auto;
+                overflow-y: hidden;
+                border: 1px solid #ddd;
+                border-radius: 6px;
+            }
+
+            #data table.data-table {
+                width: max-content;
+                min-width: 1100px;
+                table-layout: auto;
+            }
+
+            #data th,
+            #data td {
+                white-space: nowrap;
+                font-size: 12px;
+                padding: 7px 8px;
+            }
+        }
+
+        @media print {
+            body {
+                padding: 0;
+                background: white
+            }
+
+            #container,
+            #data {
+                display: none
+            }
+
+            .receipt-wrap {
+                padding: 0;
+                overflow: visible
+            }
+
+            .receipt {
+                transform: none;
+                margin: 0
+            }
+        }
+    </style>
+</head>
+
+<body onload="start()">
+    <div id="container">
+        <table>
+            <tr>
+                <td>Student ID No. :</td>
+                <td>
+                    <div class="idsearchbox">
+                        <input type="text" id="studentID" placeholder="Enter Permanent ID" oninput="searchByID()">
+
+                    </div>
+                    <div id="studentstatus"></div>
+                </td>
+            </tr>
+            <tr>
+                <td>Student Name :</td>
+                <td>
+                    <input type="text" id="t1" oninput="findstudent()">
+                </td>
+            </tr>
+            <tr>
+                <td>Guardian Name :</td>
+                <td>
+                    <input type="text" id="t2" oninput="findstudent()">
+                </td>
+            </tr>
+            <tr>
+                <td>Discount :</td>
+                <td>
+                    <label style="margin-right:18px">
+                        <input type="radio" name="discount" value="Yes" onchange="setfees();findstudent()">
+                        Yes
+                    </label>
+                    <label>
+                        <input type="radio" name="discount" value="No" checked onchange="setfees();findstudent()">
+                        No
+                    </label>
+                </td>
+            </tr>
+            <tr>
+                <td>Course :</td>
+                <td>
+                    <label style="margin-right:18px">
+                        <input type="radio" name="course" value="BCA First Year" checked
+                            onchange="setfees();findstudent()">
+                        1 Year
+                    </label>
+                    <label style="margin-right:18px">
+                        <input type="radio" name="course" value="BCA Second Year" onchange="setfees();findstudent()">
+                        2 Year
+                    </label>
+                    <label>
+                        <input type="radio" name="course" value="Full Stack Development"
+                            onchange="setfees();findstudent()">
+                        Full Stack
+                    </label>
+                    <input type="hidden" id="t3">
+                </td>
+            </tr>
+            <tr>
+                <td>Amount :</td>
+                <td>
+                    <input type="number" id="t4" readonly>
+                </td>
+            </tr>
+            <tr id="currentrow">
+                <td>Current Remaining :</td>
+                <td>
+                    <input type="number" id="currentremaining" readonly>
+                </td>
+            </tr>
+            <tr>
+                <td>Fees Received :</td>
+                <td>
+                    <input type="number" id="t5">
+                </td>
+            </tr>
+            <tr>
+                <td>Payment Mode :</td>
+                <td>
+                    <label style="margin-right:25px">
+                        <input type="radio" name="payment" value="Cash" checked>
+                        Cash
+                    </label>
+                    <label>
+                        <input type="radio" name="payment" value="UPI">
+                        UPI
+                    </label>
+                </td>
+            </tr>
+            <tr>
+                <td>Date :</td>
+                <td>
+                    <input type="date" id="userdate">
+                </td>
+            </tr>
+            <tr id="actionbuttons">
+                <td colspan="2">
+                    <button class="reset" onclick="resetform()">
+                        Reset
+                    </button>
+
+                    <button class="download" onclick="downloadreceipt()">
+                        Download Receipt
+                    </button>
+
+                    <button class="share" onclick="sharereceipt()">
+                        Share Receipt
+                    </button>
+
+                    <button class="view" onclick="viewdata()">
+                        View Data
+                    </button>
+
+                </td>
+            </tr>
+
+        </table>
+    </div>
+
+
+    <div class="receipt-wrap">
+
+        <div class="receipt" id="receipt" style="display:none">
+
+            <div class="echo">
+
+                <div class="brand">
+                    <h1>
+                        Echo <span>Education Point</span>
+                    </h1>
+                </div>
+
+                <p>
+                    Special for BCA, MCA, Programming Languages
+                    and Web Development Courses
+                </p>
+
+                <div class="address">
+                    📍 D-Mart Road, Near Balaji Temple,
+                    Meghdoot Nagar, Mandsaur (M.P.)
+                </div>
+
+            </div>
+
+            <table class="rece">
+                <tr>
+
+                    <td>Receipt No. :</td>
+
+                    <td>
+                        <input type="text" id="receiptno" readonly>
+                    </td>
+
+                    <td>
+                        <div id="title">🧾 FEES RECEIPT 🧾</div>
+                    </td>
+
+                    <td>Date :</td>
+
+                    <td>
+                        <input type="text" id="date" readonly>
+                    </td>
+
+                </tr>
+            </table>
+
+
+            <div class="form">
+
+                <div class="row">
+                    <label>👤 Student Name :</label>
+                    <p id="studentname"></p>
+                </div>
+
+                <div class="row">
+                    <label>🧑‍💼 Guardian Name :</label>
+                    <p id="fathername"></p>
+                </div>
+
+                <div class="row">
+                    <label>📚 Course :</label>
+                    <p id="course"></p>
+                </div>
+
+                <div class="row">
+                    <label>Student ID No. :</label>
+                    <p id="StuID"></p>
+                </div>
+
+                <div class="row">
+                    <label>💸 Total Fees :</label>
+                    <p id="totalfees"></p>
+                </div>
+
+                <div class="row" id="discountrow" style="display:none">
+                    <label>🎁 Fees After Disc. :</label>
+                    <p id="discountfees"></p>
+                </div>
+
+                <div class="row">
+                    <label>💵 Received Amount :</label>
+                    <p id="paidfees"></p>
+                </div>
+
+                <div class="row">
+                    <label>💸 Remaining Fees :</label>
+                    <p id="remaining"></p>
+                </div>
+
+                <div class="row">
+                    <label>✍️ Received By :</label>
+                    <p>Vijay Jain</p>
+                </div>
+
+            </div>
+
+
+            <div class="motivation">
+                ✨✨ “ शिक्षा में किया गया निवेश,
+                भविष्य की सबसे बड़ी पूंजी है।” ✨✨
+            </div>
+
+
+            <div class="bottom">
+
+                <div class="future">
+
+                    <div class="invest">→ Invest in ←</div>
+
+                    <div class="mainheading">
+                        Education
+                    </div>
+
+                    <div class="booksection">
+                        <div class="line"></div>
+
+                        <div class="bookicon">
+                            <div class="star">★</div>
+
+                            <svg width="45" height="30" viewBox="0 0 60 42">
+                                <path d="M29 8C20 4 8 5 3 8V36C8 33 20 32 29 36Z" fill="midnightblue"
+                                    stroke="midnightblue" stroke-width="2" />
+                                <path d="M31 8C40 4 52 5 57 8V36C52 33 40 32 31 36Z" fill="midnightblue"
+                                    stroke="midnightblue" stroke-width="2" />
+                            </svg>
+
+                        </div>
+
+                        <div class="line"></div>
+                    </div>
+
+                    <div class="invest">→ Invest in ←</div>
+
+                    <div class="futuretext">
+                        Future
+                    </div>
+
+                </div>
+
+
+                <div class="seal">
+
+                    <div class="sealinside">
+
+                        <p>
+                            LEARN<br>
+                            <span>CODE</span><br>
+                            GROW<br>
+                            SUCCEED
+                        </p>
+
+                        <div class="sealstar">
+                            ★ ★ ★
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <div class="director">
+
+                    <h3>Director</h3>
+
+                    <h2>Vijay Jain</h2>
+
+                    <p>(B.C.A., M.Sc., M.C.A.)</p>
+
+                    <p style="font-size:18px">
+                        📞 8269399715
+                    </p>
+
+                    <p>
+                        INSTA : @vijayjainechoeducation
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="thank">
+                🔸🔸🔸🔶 THANK YOU 🔶🔸🔸🔸
+            </div>
+
+        </div>
+    </div>
+
+
+    <div id="data">
+
+        <h2>Saved Student Data</h2>
+
+        <div class="summarybox">
+
+            <table class="summary">
+                <tr>
+
+                    <td>
+                        <div>Total Fees</div>
+                        <div id="summaryTotal">Rs. 0</div>
+                    </td>
+
+                    <td>
+                        <div>Total Discount Fees</div>
+                        <div id="summaryDiscount">Rs. 0</div>
+                    </td>
+
+                    <td>
+                        <div>Total Received</div>
+                        <div id="summaryPaid">Rs. 0</div>
+                    </td>
+
+                    <td>
+                        <div>Total Remaining</div>
+                        <div id="summaryRemaining">Rs. 0</div>
+                    </td>
+
+                </tr>
+            </table>
+
+        </div>
+
+
+        <div class="filters">
+
+            <button class="filter active" onclick="filterCourse('All',this)">
+                All
+            </button>
+
+            <button class="filter" onclick="filterCourse('BCA First Year',this)">
+                1st Year
+            </button>
+
+            <button class="filter" onclick="filterCourse('BCA Second Year',this)">
+                2nd Year
+            </button>
+
+            <button class="filter" onclick="filterCourse('Full Stack Development',this)">
+                Full Stack
+            </button>
+
+            <button class="filter" onclick="filterCourse('Discount',this)">
+                Discount
+            </button>
+
+        </div>
+
+
+        <div class="tablebox" id="studenttablebox">
+
+            <table class="data-table">
+
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Student</th>
+                        <th>Guardian</th>
+                        <th>Course</th>
+                        <th>Total Fees</th>
+                        <th>Received</th>
+                        <th>Remaining</th>
+                        <th>Receipt</th>
+                        <th>Delete</th>
+                    </tr>
+                </thead>
+
+                <tbody id="datatable"></tbody>
+
+            </table>
+
+        </div>
+
+
+        <div id="paymenthistory">
+
+            <h2>Payment History</h2>
+
+            <div class="tablebox">
+
+                <table class="data-table">
+
+                    <thead>
+                        <tr>
+                            <th>Receipt</th>
+                            <th>Amount</th>
+                            <th>Payment Mode</th>
+                            <th>Date</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+
+                    <tbody id="paymenttable"></tbody>
+
+                </table>
+
+            </div>
+
+            <button class="closeview" onclick="closepaymenthistory()">
+                Back to Students
+            </button>
+
+        </div>
+
+
+        <button class="closeview" onclick="closedata()">
+            Close Data
+        </button>
+
+    </div>
+
+
+    <script>
+
+        let oldstudent = false;
+        let oldremaining = 0;
+        let currentRecord = null;
+        let currentFilter = "All";
+        let currentSaved = false;
+
+        const $ = id => document.getElementById(id);
+
+
+        function start() {
+
+            randomno();
+            setTodayDate();
+            setfees();
+            findstudent();
+
+        }
+
+
+        function setTodayDate() {
+
+            let d = new Date();
+
+            let y = d.getFullYear();
+
+            let m = String(d.getMonth() + 1).padStart(2, "0");
+
+            let day = String(d.getDate()).padStart(2, "0");
+
+            $("userdate").value = `${y}-${m}-${day}`;
+
+        }
+
+
+        function randomno() {
+
+            $("receiptno").value =
+                "EEP0" +
+                Math.floor(100 + Math.random() * 900);
+
+        }
+
+
+        function getFees(c) {
+
+            if (c == "BCA First Year") return 10000;
+
+            if (c == "BCA Second Year") return 11000;
+
+            if (c == "Full Stack Development") return 13000;
+
+            return 0;
+
+        }
+
+
+        function getDiscountFees(c) {
+
+            if (c == "BCA First Year") return 9500;
+
+            if (c == "BCA Second Year") return 10000;
+
+            if (c == "Full Stack Development") return 12000;
+
+            return 0;
+
+        }
+
+
+        function discountYes() {
+
+            let d = document.querySelector(
+                'input[name="discount"]:checked'
+            );
+
+            return d && d.value == "Yes";
+
+        }
+
+
+        function getCourse() {
+
+            let c = document.querySelector(
+                'input[name="course"]:checked'
+            );
+
+            return c ? c.value : "";
+
+        }
+
+
+        function setfees() {
+
+            let c = getCourse();
+
+            if (!c) return;
+
+            $("t3").value = c;
+
+            let fees = discountYes()
+                ? getDiscountFees(c)
+                : getFees(c);
+
+            $("t4").value = fees;
+
+            if (!discountYes()) {
+                $("t5").value = "";
+            }
+
+            if (!$("userdate").value) {
+                setTodayDate();
+            }
+
+        }
+
+
+        function getPaid(x) {
+
+            if (Array.isArray(x.payments) && x.payments.length) {
+
+                return x.payments.reduce(
+                    (s, p) => s + (Number(p.received) || 0),
+                    0
+                );
+
+            }
+
+            return Number(x.received) || 0;
+
+        }
+
+
+        function getLimit(x) {
+
+            if (x.discount == "Yes") {
+
+                return Number(x.discountFees) ||
+                    getDiscountFees(x.course);
+
+            }
+
+            return Number(x.totalFees) ||
+                getFees(x.course);
+
+        }
+
+
+        function getRemaining(x) {
+
+            return Math.max(
+                0,
+                getLimit(x) - getPaid(x)
+            );
+
+        }
+
+        function searchByID() {
+
+            let id = $("studentID").value.trim();
+
+            let status = $("studentstatus");
+
+            status.style.display = "none";
+
+            if (!id) {
+
+                return;
+
+            }
+
+            let arr = JSON.parse(
+                localStorage.getItem("students")
+            ) || [];
+
+            let students = arr.filter(x =>
+                String(x.studentID || "").trim() == id
+            );
+
+            if (!students.length) {
+
+                status.style.display = "block";
+                status.style.background = "#fff3e0";
+                status.style.color = "brown";
+                status.innerText =
+                    "New Student  Plese Enter Details";
+
+                $("t1").value = "";
+                $("t2").value = "";
+                $("currentremaining").value = "";
+                $("currentrow").style.display = "none";
+
+                oldstudent = false;
+                currentRecord = null;
+
+                return;
+
+            }
+            let course = getCourse();
+
+            let found = students.find(x =>
+                String(x.course) == String(course)
+            );
+
+            if (!found) {
+
+                found = students[students.length - 1];
+
+                $("t1").value = found.name || "";
+                $("t2").value = found.father || "";
+
+                status.style.display = "block";
+                status.style.background = "#e8f5e9";
+                status.style.color = "seagreen";
+
+                status.innerText =
+                    "Student mila. ID permanent hai. Is course ka naya record banega.";
+
+                $("currentrow").style.display = "none";
+                $("currentremaining").value = "";
+
+                oldstudent = false;
+                currentRecord = null;
+
+                return;
+
+            }
+
+
+            $("t1").value = found.name || "";
+            $("t2").value = found.father || "";
+
+            $("studentID").value = found.studentID || id;
+
+            oldstudent = true;
+            currentRecord = found;
+
+            oldremaining = getRemaining(found);
+
+            $("currentremaining").value = oldremaining;
+
+            $("currentrow").style.display = "table-row";
+
+            status.style.display = "block";
+            status.style.background = "#e8f5e9";
+            status.style.color = "seagreen";
+
+            status.innerText =
+                "Old Student Found • Remaining Fees: Rs. " +
+                oldremaining;
+
+        }
+        function findstudent() {
+
+            let name = $("t1").value.trim().toLowerCase();
+
+            let father = $("t2").value.trim().toLowerCase();
+
+            let course = getCourse();
+
+            if (!name || !father || !course)
+                return;
+
+            let arr = JSON.parse(
+                localStorage.getItem("students")
+            ) || [];
+
+            let found = arr.find(x =>
+                String(x.name).trim().toLowerCase() == name &&
+                String(x.father).trim().toLowerCase() == father &&
+                String(x.course) == course
+            );
+
+            if (!found) {
+
+                oldstudent = false;
+                oldremaining = 0;
+                currentRecord = null;
+
+                $("currentrow").style.display = "none";
+                $("currentremaining").value = "";
+
+                return;
+
+            }
+
+            $("studentID").value = found.studentID || "";
+
+            oldstudent = true;
+            currentRecord = found;
+
+            oldremaining = getRemaining(found);
+
+            $("currentremaining").value = oldremaining;
+
+            $("currentrow").style.display = "table-row";
+
+        }
+        function calculate() {
+
+            let c = getCourse();
+
+            let pay = document.querySelector(
+                'input[name="payment"]:checked'
+            );
+
+            let name = $("t1").value.trim();
+
+            let father = $("t2").value.trim();
+
+            let id = $("studentID").value.trim();
+
+            if (!id) {
+
+                alert("Please enter Student ID No.");
+
+                return false;
+
+            }
+
+            if (!name || !father) {
+
+                alert(
+                    "Please fill Student Name and Guardian Name"
+                );
+
+                return false;
+
+            }
+
+            if (!c || !pay) {
+
+                alert("Please fill all fields");
+
+                return false;
+
+            }
+
+
+            let arr = JSON.parse(
+                localStorage.getItem("students")
+            ) || [];
+
+            let found = arr.find(x =>
+                String(x.studentID || "").trim() == id &&
+                String(x.course) == c
+            );
+
+
+            let original = getFees(c);
+
+            let actual = Number($("t4").value) || 0;
+
+            let received = Number($("t5").value) || 0;
+
+
+            let limit = found
+                ? getLimit(found)
+                : (
+                    discountYes()
+                        ? actual
+                        : original
+                );
+
+
+            let paidBefore = found
+                ? getPaid(found)
+                : 0;
+
+
+            let remainBefore = Math.max(
+                0,
+                limit - paidBefore
+            );
+
+
+            if (found && remainBefore <= 0) {
+
+                alert("Aapki puri fees jama hai.");
+
+                showOldStudentReceipt(found);
+
+                return false;
+
+            }
+
+
+            if (received <= 0) {
+
+                alert("Please enter Fees Received");
+
+                return false;
+
+            }
+            if (
+                discountYes() &&
+                received != actual
+            ) {
+
+                alert(
+                    "Discount is available only when full fees of Rs. " +
+                    actual +
+                    " is paid at once."
+                );
+
+                return false;
+
+            }
+
+
+            if (received > remainBefore) {
+
+                alert(
+                    "Fees Received cannot be greater than Current Remaining Fees"
+                );
+
+                return false;
+
+            }
+
+
+            let remain = remainBefore - received;
+
+
+            $("studentname").innerHTML = name;
+
+            $("fathername").innerHTML = father;
+
+            $("course").innerHTML = c;
+
+            $("StuID").innerHTML = id;
+
+
+            $("totalfees").innerHTML =
+                "Rs. " + original + " /-";
+
+
+            if (discountYes()) {
+
+                $("discountrow").style.display = "flex";
+
+                $("discountfees").innerHTML =
+                    "Rs. " + actual + " /-";
+
+            } else {
+
+                $("discountrow").style.display = "none";
+
+                $("discountfees").innerHTML = "";
+
+            }
+
+
+            $("paidfees").innerHTML =
+                "Rs. " + received +
+                " /- By " + pay.value;
+
+
+            $("remaining").innerHTML =
+                "Rs. " + remain + " /-";
+
+
+            $("currentremaining").value = remain;
+
+
+            if (!$("userdate").value)
+                setTodayDate();
+
+
+            let d = $("userdate").value.split("-");
+
+            $("date").value =
+                d[2] + "/" + d[1] + "/" + d[0];
+
+
+            return true;
+
+        }
+        function saveData() {
+
+            let arr = JSON.parse(
+                localStorage.getItem("students")
+            ) || [];
+
+
+            let pay = document.querySelector(
+                'input[name="payment"]:checked'
+            );
+
+
+            let id = $("studentID").value.trim();
+
+            let name = $("t1").value.trim();
+
+            let father = $("t2").value.trim();
+
+            let course = $("t3").value;
+
+            let original = getFees(course);
+
+            let actual = Number($("t4").value) || 0;
+
+            let receivedNow = Number($("t5").value) || 0;
+
+            let discount = discountYes()
+                ? "Yes"
+                : "No";
+
+
+            let limit = discount == "Yes"
+                ? actual
+                : original;
+            let index = arr.findIndex(x =>
+                String(x.studentID || "").trim() == id &&
+                String(x.course) == course
+            );
+
+
+            let remain = Number(
+                $("remaining")
+                    .innerText
+                    .replace(/[^\d.-]/g, "")
+            ) || 0;
+
+
+            let payment = {
+                receipt: $("receiptno").value,
+                received: receivedNow,
+                payment: pay.value,
+                date: $("date").value,
+                remaining: remain
+            };
+
+
+            if (index >= 0) {
+
+                let x = arr[index];
+
+                if (!Array.isArray(x.payments))
+                    x.payments = [];
+
+                x.payments.push(payment);
+
+                x.studentID = id;
+
+                x.name = name;
+
+                x.father = father;
+
+                x.course = course;
+
+                x.totalFees = original;
+
+                x.discountFees =
+                    discount == "Yes"
+                        ? actual
+                        : original;
+
+                x.discount = discount;
+
+                x.received = getPaid(x);
+
+                x.remaining = Math.max(
+                    0,
+                    limit - x.received
+                );
+
+                x.payment = pay.value;
+
+                x.date = $("date").value;
+
+                x.receipt = $("receiptno").value;
+
+                arr[index] = x;
+
+                currentRecord = x;
+
+            } else {
+
+                let obj = {
+
+                    studentID: id,
+
+                    receipt: $("receiptno").value,
+
+                    name: name,
+
+                    father: father,
+
+                    course: course,
+
+                    totalFees: original,
+
+                    discountFees:
+                        discount == "Yes"
+                            ? actual
+                            : original,
+
+                    discount: discount,
+
+                    received: receivedNow,
+
+                    remaining: remain,
+
+                    payment: pay.value,
+
+                    date: $("date").value,
+
+                    payments: [payment]
+
+                };
+
+                arr.push(obj);
+
+                currentRecord = obj;
+
+            }
+
+
+            localStorage.setItem(
+                "students",
+                JSON.stringify(arr)
+            );
+
+            currentSaved = true;
+
+        }
+
+        function prepareReceipt() {
+
+            if (!calculate())
+                return false;
+
+
+            $("container").style.display = "none";
+
+            $("receipt").style.display = "block";
+
+
+            return true;
+
+        }
+        function downloadreceipt() {
+
+            if (!prepareReceipt())
+                return;
+
+
+            if (!currentSaved)
+                saveData();
+
+
+            html2canvas(
+                $("receipt"),
+                {
+                    scale: 2,
+                    useCORS: true,
+                    backgroundColor: "white"
+                }
+            ).then(canvas => {
+
+                let link = document.createElement("a");
+
+                link.href = canvas.toDataURL("image/png");
+
+                link.download =
+                    "Receipt-" +
+                    $("receiptno").value +
+                    ".png";
+
+                document.body.appendChild(link);
+
+                link.click();
+
+                document.body.removeChild(link);
+
+            });
+
+        }
+        function sharereceipt() {
+
+            if (!prepareReceipt())
+                return;
+
+
+            if (!currentSaved)
+                saveData();
+
+
+            html2canvas(
+                $("receipt"),
+                {
+                    scale: 2,
+                    useCORS: true,
+                    backgroundColor: "white"
+                }
+            ).then(canvas => {
+
+                canvas.toBlob(blob => {
+                    let file = new File(
+                        [blob],
+                        "Receipt-" + $("receiptno").value + ".png",
+                        {
+                            type: "image/png"
+                        }
+                    );
+                    if (
+                        navigator.canShare &&
+                        navigator.canShare({ files: [file] })
+                    ) {
+                        navigator.share({
+                            title: "Echo Education Point",
+                            files: [file]
+                        }).catch(() => { });
+                    } else {
+                        alert(
+                            "Sharing files is not supported on this browser."
+                        );
+                    }
+                });
+            });
+        }
+        function showOldStudentReceipt(x) {
+            $("container").style.display = "none";
+            $("data").style.display = "none";
+            $("receipt").style.display = "block";
+            $("studentname").innerHTML = x.name || "";
+            $("fathername").innerHTML = x.father || "";
+            $("course").innerHTML = x.course || "";
+            $("StuID").innerHTML = x.studentID || "";
+            $("totalfees").innerHTML =
+                "Rs. " + (x.totalFees || 0) + " /-";
+            if (x.discount == "Yes") {
+                $("discountrow").style.display = "flex";
+                $("discountfees").innerHTML =
+                    "Rs. " + (x.discountFees || 0) + " /-";
+            } else {
+                $("discountrow").style.display = "none";
+            }
+            let p = Array.isArray(x.payments) && x.payments.length
+                ? x.payments[x.payments.length - 1]
+                : x;
+            $("paidfees").innerHTML =
+                "Rs. " + (p.received || 0) +
+                " /- By " + (p.payment || "");
+            $("remaining").innerHTML =
+                "Rs. " + getRemaining(x) + " /-";
+            $("receiptno").value =
+                p.receipt || x.receipt || "";
+            $("date").value =
+                p.date || x.date || "";
+
+        }
+        function viewdata() {
+            currentFilter = "All";
+            $("container").style.display = "none";
+            $("receipt").style.display = "none";
+            $("paymenthistory").style.display = "none";
+            $("studenttablebox").style.display = "block";
+            document.querySelectorAll(".filter")
+                .forEach(b => b.classList.remove("active"));
+            document.querySelector(".filter")
+                .classList.add("active");
+            renderData("All");
+            $("data").style.display = "block";
+            $("data").scrollIntoView({
+                behavior: "smooth"
+            });
+
+        }
+        function filterCourse(filter, button) {
+            currentFilter = filter;
+            $("paymenthistory").style.display = "none";
+            $("studenttablebox").style.display = "block";
+            document.querySelectorAll(".filter")
+                .forEach(b => b.classList.remove("active"));
+            button.classList.add("active");
+            renderData(filter);
+
+        }
+
+        function renderData(filter) {
+
+            let arr = JSON.parse(
+                localStorage.getItem("students")
+            ) || [];
+
+
+            let filtered = arr.filter(x =>
+
+                filter == "Discount"
+                    ? x.discount == "Yes"
+                    :
+                    filter == "All" ||
+                    x.course == filter
+
+            );
+
+
+            $("datatable").innerHTML = "";
+
+
+            if (!filtered.length) {
+
+                $("datatable").innerHTML = `
+        <tr>
+            <td colspan="11">
+                No Student Data Found
+            </td>
+        </tr>`;
+
+                updateStudentSummary([]);
+
+                return;
+
+            }
+
+
+            filtered.forEach(x => {
+
+                let totalPaid = getPaid(x);
+
+                let latest =
+                    Array.isArray(x.payments) && x.payments.length
+                        ? x.payments[x.payments.length - 1]
+                        : x;
+
+
+                let total = getLimit(x);
+
+                let remain = getRemaining(x);
+
+
+                let n = encodeURIComponent(x.name || "");
+
+                let f = encodeURIComponent(x.father || "");
+
+                let c = encodeURIComponent(x.course || "");
+
+                let r = encodeURIComponent(x.receipt || "");
+
+
+                let count =
+                    Array.isArray(x.payments)
+                        ? x.payments.length
+                        : 1;
+
+
+                let btn = count > 1
+
+                    ? `
+
+        <button class="oldreceipt"
+        onclick="viewPaymentReceipt(
+            '${n}',
+            '${f}',
+            '${c}'
+        )">
+        Receipts
+        </button>
+
+        `
+
+                    : `
+
+        <button class="oldreceipt"
+        onclick="viewPaymentReceipt(
+            '${n}',
+            '${f}',
+            '${c}',
+            '${r}'
+        )">
+        Receipt
+        </button>
+
+        `;
+
+
+                let del = `
+
+        <button class="delete"
+        onclick="deleteStudent(
+            '${encodeURIComponent(x.studentID || "")}',
+            '${n}',
+            '${f}',
+            '${c}'
+        )">
+        Delete
+        </button>
+
+        `;
+
+
+                $("datatable").innerHTML += `
+
+        <tr>
+
+            <td>${x.studentID || ""}</td>
+
+            <td>${x.name || ""}</td>
+
+            <td>${x.father || ""}</td>
+
+            <td>${x.course || ""}</td>
+
+            <td>Rs. ${total}</td>
+
+            <td>Rs. ${totalPaid}</td>
+
+            <td>Rs. ${remain}</td>
+
+            
+            <td>${btn}</td>
+
+            <td>${del}</td>
+
+        </tr>
+
+        `;
+
+            });
+
+
+            updateStudentSummary(filtered);
+
+        }
+        function updateStudentSummary(arr) {
+
+            let total = 0;
+
+            let discount = 0;
+
+            let paid = 0;
+
+            let rem = 0;
+
+
+            arr.forEach(x => {
+
+                total += getLimit(x);
+
+                if (x.discount == "Yes") {
+
+                    discount +=
+                        (Number(x.totalFees) || 0) -
+                        (Number(x.discountFees) || 0);
+
+                }
+
+                paid += getPaid(x);
+
+                rem += getRemaining(x);
+
+            });
+
+
+            $("summaryTotal").innerHTML =
+                "Rs. " + total;
+
+            $("summaryDiscount").innerHTML =
+                "Rs. " + discount;
+
+            $("summaryPaid").innerHTML =
+                "Rs. " + paid;
+
+            $("summaryRemaining").innerHTML =
+                "Rs. " + rem;
+
+        }
+        function deleteStudent(
+            id,
+            name,
+            father,
+            course
+        ) {
+
+            id = decodeURIComponent(id);
+
+            name = decodeURIComponent(name);
+
+            father = decodeURIComponent(father);
+
+            course = decodeURIComponent(course);
+
+
+            if (!confirm(
+                "Is student ka pura record delete karna hai?"
+            )) {
+                return;
+            }
+
+
+            let arr = JSON.parse(
+                localStorage.getItem("students")
+            ) || [];
+
+
+            arr = arr.filter(x =>
+                !(
+                    String(x.studentID || "") == id &&
+                    String(x.name).trim().toLowerCase() ==
+                    name.trim().toLowerCase() &&
+                    String(x.father).trim().toLowerCase() ==
+                    father.trim().toLowerCase() &&
+                    String(x.course) == course
+                )
+            );
+
+
+            localStorage.setItem(
+                "students",
+                JSON.stringify(arr)
+            );
+
+
+            renderData(currentFilter);
+
+        }
+        function viewPaymentReceipt(
+            name,
+            father,
+            courseValue,
+            receiptValue
+        ) {
+
+            name = decodeURIComponent(name);
+
+            father = decodeURIComponent(father);
+
+            courseValue = decodeURIComponent(courseValue);
+
+
+            if (receiptValue)
+                receiptValue = decodeURIComponent(receiptValue);
+
+
+            let arr = JSON.parse(
+                localStorage.getItem("students")
+            ) || [];
+
+
+            let student = arr.find(x =>
+
+                String(x.name).trim().toLowerCase() ==
+                name.trim().toLowerCase()
+
+                &&
+                String(x.father).trim().toLowerCase() ==
+                father.trim().toLowerCase()
+                &&
+                String(x.course) == courseValue
+            );
+            if (!student) return;
+            if (
+                !Array.isArray(student.payments) ||
+                student.payments.length <= 1
+            ) {
+                if (
+                    Array.isArray(student.payments) &&
+                    student.payments.length == 1
+                ) {
+                    showPaymentReceipt(
+                        student,
+                        student.payments[0]
+                    );
+                } else {
+                    showOldStudentReceipt(student);
+                }
+                return;
+            }
+            if (receiptValue) {
+                let p = student.payments.find(p =>
+                    String(p.receipt) == receiptValue
+                );
+                if (p)
+                    showPaymentReceipt(student, p);
+                return;
+            }
+            showPaymentHistory(student);
+        }
+        function showPaymentHistory(student) {
+            $("container").style.display = "none";
+            $("receipt").style.display = "none";
+            $("data").style.display = "block";
+            $("studenttablebox").style.display = "none";
+            $("paymenthistory").style.display = "block";
+            $("paymenttable").innerHTML = "";
+            student.payments.forEach(p => {
+                $("paymenttable").innerHTML += `
+        <tr>
+            <td>${p.receipt || ""}</td>
+            <td>Rs. ${p.received || 0}</td>
+            <td>${p.payment || ""}</td>
+            <td>${p.date || ""}</td>
+            <td>
+                <button
+                class="paymentreceipt"
+                onclick="viewPaymentReceipt(
+                    '${encodeURIComponent(student.name)}',
+                    '${encodeURIComponent(student.father)}',
+                    '${encodeURIComponent(student.course)}',
+                    '${encodeURIComponent(p.receipt || "")}'
+                )">
+                Receipt
+                </button>
+                </td>
+           </tr>
+         `;
+            });
+            $("data").scrollIntoView({
+                behavior: "smooth"
+            });
+        }
+        function closepaymenthistory() {
+            $("paymenthistory").style.display = "none";
+            $("studenttablebox").style.display = "block";
+            renderData(currentFilter);
+        }
+        function showPaymentReceipt(student, payment) {
+            $("container").style.display = "none";
+            $("data").style.display = "none";
+            $("receipt").style.display = "block";
+            $("studentname").innerHTML =
+                student.name || "";
+            $("fathername").innerHTML =
+                student.father || "";
+            $("course").innerHTML =
+                student.course || "";
+            $("StuID").innerHTML =
+                student.studentID || "";
+            $("totalfees").innerHTML =
+                "Rs. " +
+                (student.totalFees || 0) +
+                " /-";
+            if (student.discount == "Yes") {
+                $("discountrow").style.display = "flex";
+                $("discountfees").innerHTML =
+                    "Rs. " +
+                    (student.discountFees || 0) +
+                    " /-";
+            } else {
+                $("discountrow").style.display = "none";
+            }
+            $("paidfees").innerHTML =
+                "Rs. " +
+                (payment.received || 0) +
+                " /- By " +
+                (payment.payment || "");
+            $("remaining").innerHTML =
+                "Rs. " +
+                (
+                    payment.remaining !== undefined
+                        ? payment.remaining
+                        : getRemaining(student)
+                ) +
+                " /-";
+            $("receiptno").value =
+                payment.receipt || "";
+            $("date").value =
+                payment.date || "";
+        }
+        function closedata() {
+            $("data").style.display = "none";
+            $("paymenthistory").style.display = "none";
+            $("studenttablebox").style.display = "block";
+            $("container").style.display = "block";
+            $("receipt").style.display = "none";
+            $("container").scrollIntoView({
+                behavior: "smooth"
+            });
+        }
+        function resetform() {
+            $("t1").value = "";
+            $("t2").value = "";
+            $("t3").value = "";
+            $("studentID").value = "";
+            $("t5").value = "";
+            $("currentremaining").value = "";
+            $("currentrow").style.display = "none";
+            $("studentstatus").style.display = "none";
+            oldstudent = false;
+            oldremaining = 0;
+            currentRecord = null;
+            currentSaved = false;
+            document.querySelector(
+                'input[name="discount"][value="Yes"]'
+            ).checked = false;
+            document.querySelector(
+                'input[name="discount"][value="No"]'
+            ).checked = true;
+            document.querySelector(
+                'input[name="course"][value="BCA First Year"]'
+            ).checked = true;
+            document.querySelector(
+                'input[name="payment"][value="Cash"]'
+            ).checked = true;
+            $("receipt").style.display = "none";
+            $("container").style.display = "block";
+            $("data").style.display = "none";
+            $("paymenthistory").style.display = "none";
+            $("studenttablebox").style.display = "block";
+            randomno();
+            setTodayDate();
+            setfees();
+        }
+    </script>
+</body>
+
+</html>
