@@ -886,6 +886,11 @@
                     <p id="discountfees"></p>
                 </div>
 
+                <div class="row" id="previouspaidrow" style="display:none">
+                    <label>💰 Previous Paid :</label>
+                    <p id="previouspaid"></p>
+                </div>
+
                 <div class="row">
                     <label>💵 Received Amount :</label>
                     <p id="paidfees"></p>
@@ -1336,7 +1341,7 @@
                 status.style.color = "seagreen";
 
                 status.innerText =
-                    "Student mila. ID permanent hai. Is course ka naya record banega.";
+                    "old student find plese Enter fees";
 
                 $("currentrow").style.display = "none";
                 $("currentremaining").value = "";
@@ -1433,31 +1438,19 @@
             let id = $("studentID").value.trim();
 
             if (!id) {
-
                 alert("Please enter Student ID No.");
-
                 return false;
-
             }
 
             if (!name || !father) {
-
-                alert(
-                    "Please fill Student Name and Guardian Name"
-                );
-
+                alert("Please fill Student Name and Guardian Name");
                 return false;
-
             }
 
             if (!c || !pay) {
-
                 alert("Please fill all fields");
-
                 return false;
-
             }
-
 
             let arr = JSON.parse(
                 localStorage.getItem("students")
@@ -1468,182 +1461,149 @@
                 String(x.course) == c
             );
 
-
             let original = getFees(c);
-
-            let actual = Number($("t4").value) || 0;
-
             let received = Number($("t5").value) || 0;
 
+            /*
+             * Existing student:
+             * Always use the fee/discount already saved for that student.
+             * Do not change the old record's fee limit just because the
+             * current Discount radio button is changed.
+             */
+            let recordDiscount = found
+                ? found.discount == "Yes"
+                : discountYes();
 
             let limit = found
                 ? getLimit(found)
-                : (
-                    discountYes()
-                        ? actual
-                        : original
-                );
+                : (recordDiscount
+                    ? getDiscountFees(c)
+                    : original);
 
-
-            let paidBefore = found
-                ? getPaid(found)
-                : 0;
-
+            let paidBefore = found ? getPaid(found) : 0;
 
             let remainBefore = Math.max(
                 0,
                 limit - paidBefore
             );
 
-
             if (found && remainBefore <= 0) {
-
                 alert("Aapki puri fees jama hai.");
-
                 showOldStudentReceipt(found);
-
                 return false;
-
             }
-
 
             if (received <= 0) {
-
                 alert("Please enter Fees Received");
-
                 return false;
-
             }
-            if (
-                discountYes() &&
-                received != actual
-            ) {
 
+            /*
+             * Discount is allowed only for a new student/payment record.
+             * For an old student, continue with that student's already
+             * saved fee limit.
+             */
+            if (
+                !found &&
+                recordDiscount &&
+                received != limit
+            ) {
                 alert(
                     "Discount is available only when full fees of Rs. " +
-                    actual +
+                    limit +
                     " is paid at once."
                 );
-
                 return false;
-
             }
 
-
             if (received > remainBefore) {
-
                 alert(
                     "Fees Received cannot be greater than Current Remaining Fees"
                 );
-
                 return false;
-
             }
-
 
             let remain = remainBefore - received;
 
-
             $("studentname").innerHTML = name;
-
             $("fathername").innerHTML = father;
-
             $("course").innerHTML = c;
-
             $("StuID").innerHTML = id;
-
 
             $("totalfees").innerHTML =
                 "Rs. " + original + " /-";
 
-
-            if (discountYes()) {
-
+            if (recordDiscount) {
                 $("discountrow").style.display = "flex";
-
                 $("discountfees").innerHTML =
-                    "Rs. " + actual + " /-";
-
+                    "Rs. " + limit + " /-";
             } else {
-
                 $("discountrow").style.display = "none";
-
                 $("discountfees").innerHTML = "";
-
             }
 
+            /*
+             * Show previous paid only when this is an old student and
+             * something was already paid before the current receipt.
+             */
+            if (found && paidBefore > 0) {
+                $("previouspaidrow").style.display = "flex";
+                $("previouspaid").innerHTML =
+                    "Rs. " + paidBefore + " /-";
+            } else {
+                $("previouspaidrow").style.display = "none";
+                $("previouspaid").innerHTML = "";
+            }
 
             $("paidfees").innerHTML =
                 "Rs. " + received +
                 " /- By " + pay.value;
 
-
             $("remaining").innerHTML =
                 "Rs. " + remain + " /-";
 
-
             $("currentremaining").value = remain;
-
 
             if (!$("userdate").value)
                 setTodayDate();
-
 
             let d = $("userdate").value.split("-");
 
             $("date").value =
                 d[2] + "/" + d[1] + "/" + d[0];
 
-
             return true;
-
         }
+
         function saveData() {
 
             let arr = JSON.parse(
                 localStorage.getItem("students")
             ) || [];
 
-
             let pay = document.querySelector(
                 'input[name="payment"]:checked'
             );
 
-
             let id = $("studentID").value.trim();
-
             let name = $("t1").value.trim();
-
             let father = $("t2").value.trim();
-
             let course = $("t3").value;
 
             let original = getFees(course);
-
             let actual = Number($("t4").value) || 0;
-
             let receivedNow = Number($("t5").value) || 0;
 
-            let discount = discountYes()
-                ? "Yes"
-                : "No";
-
-
-            let limit = discount == "Yes"
-                ? actual
-                : original;
             let index = arr.findIndex(x =>
                 String(x.studentID || "").trim() == id &&
                 String(x.course) == course
             );
-
 
             let remain = Number(
                 $("remaining")
                     .innerText
                     .replace(/[^\d.-]/g, "")
             ) || 0;
-
 
             let payment = {
                 receipt: $("receiptno").value,
@@ -1652,7 +1612,6 @@
                 date: $("date").value,
                 remaining: remain
             };
-
 
             if (index >= 0) {
 
@@ -1664,80 +1623,79 @@
                 x.payments.push(payment);
 
                 x.studentID = id;
-
                 x.name = name;
-
                 x.father = father;
-
                 x.course = course;
 
-                x.totalFees = original;
+                /*
+                 * IMPORTANT:
+                 * Keep the original fee/discount settings of an old
+                 * student. This prevents View Data Remaining from becoming
+                 * 0 when a later payment is saved with another discount
+                 * radio selection.
+                 */
+                x.totalFees = Number(x.totalFees) || original;
 
-                x.discountFees =
-                    discount == "Yes"
-                        ? actual
-                        : original;
-
-                x.discount = discount;
+                if (x.discount == "Yes") {
+                    x.discountFees =
+                        Number(x.discountFees) ||
+                        getDiscountFees(course);
+                } else {
+                    x.discount = "No";
+                    x.discountFees =
+                        Number(x.totalFees) || original;
+                }
 
                 x.received = getPaid(x);
 
+                let savedLimit = getLimit(x);
+
                 x.remaining = Math.max(
                     0,
-                    limit - x.received
+                    savedLimit - x.received
                 );
 
                 x.payment = pay.value;
-
                 x.date = $("date").value;
-
                 x.receipt = $("receiptno").value;
 
                 arr[index] = x;
-
                 currentRecord = x;
 
             } else {
 
+                let recordDiscount = discountYes();
+
+                let limit = recordDiscount
+                    ? actual
+                    : original;
+
                 let obj = {
-
                     studentID: id,
-
                     receipt: $("receiptno").value,
-
                     name: name,
-
                     father: father,
-
                     course: course,
-
                     totalFees: original,
-
                     discountFees:
-                        discount == "Yes"
+                        recordDiscount
                             ? actual
                             : original,
-
-                    discount: discount,
-
+                    discount:
+                        recordDiscount
+                            ? "Yes"
+                            : "No",
                     received: receivedNow,
-
-                    remaining: remain,
-
+                    remaining:
+                        Math.max(0, limit - receivedNow),
                     payment: pay.value,
-
                     date: $("date").value,
-
                     payments: [payment]
-
                 };
 
                 arr.push(obj);
-
                 currentRecord = obj;
-
             }
-
 
             localStorage.setItem(
                 "students",
@@ -1745,7 +1703,6 @@
             );
 
             currentSaved = true;
-
         }
 
         function prepareReceipt() {
@@ -1843,36 +1800,72 @@
             });
         }
         function showOldStudentReceipt(x) {
+
             $("container").style.display = "none";
             $("data").style.display = "none";
             $("receipt").style.display = "block";
+
             $("studentname").innerHTML = x.name || "";
             $("fathername").innerHTML = x.father || "";
             $("course").innerHTML = x.course || "";
             $("StuID").innerHTML = x.studentID || "";
+
             $("totalfees").innerHTML =
                 "Rs. " + (x.totalFees || 0) + " /-";
+
+            let limit = getLimit(x);
+
             if (x.discount == "Yes") {
                 $("discountrow").style.display = "flex";
                 $("discountfees").innerHTML =
-                    "Rs. " + (x.discountFees || 0) + " /-";
+                    "Rs. " + limit + " /-";
             } else {
                 $("discountrow").style.display = "none";
+                $("discountfees").innerHTML = "";
             }
-            let p = Array.isArray(x.payments) && x.payments.length
-                ? x.payments[x.payments.length - 1]
+
+            let payments =
+                Array.isArray(x.payments)
+                    ? x.payments
+                    : [];
+
+            let p = payments.length
+                ? payments[payments.length - 1]
                 : x;
+
+            let previousPaid = payments.length > 1
+                ? payments
+                    .slice(0, -1)
+                    .reduce(
+                        (s, item) =>
+                            s + (Number(item.received) || 0),
+                        0
+                    )
+                : 0;
+
+            if (previousPaid > 0) {
+                $("previouspaidrow").style.display = "flex";
+                $("previouspaid").innerHTML =
+                    "Rs. " + previousPaid + " /-";
+            } else {
+                $("previouspaidrow").style.display = "none";
+                $("previouspaid").innerHTML = "";
+            }
+
             $("paidfees").innerHTML =
                 "Rs. " + (p.received || 0) +
                 " /- By " + (p.payment || "");
+
             $("remaining").innerHTML =
                 "Rs. " + getRemaining(x) + " /-";
+
             $("receiptno").value =
                 p.receipt || x.receipt || "";
+
             $("date").value =
                 p.date || x.date || "";
-
         }
+
         function viewdata() {
             currentFilter = "All";
             $("container").style.display = "none";
@@ -2239,48 +2232,111 @@
             renderData(currentFilter);
         }
         function showPaymentReceipt(student, payment) {
+
             $("container").style.display = "none";
             $("data").style.display = "none";
             $("receipt").style.display = "block";
+
             $("studentname").innerHTML =
                 student.name || "";
+
             $("fathername").innerHTML =
                 student.father || "";
+
             $("course").innerHTML =
                 student.course || "";
+
             $("StuID").innerHTML =
                 student.studentID || "";
+
             $("totalfees").innerHTML =
                 "Rs. " +
                 (student.totalFees || 0) +
                 " /-";
+
+            let limit = getLimit(student);
+
             if (student.discount == "Yes") {
                 $("discountrow").style.display = "flex";
                 $("discountfees").innerHTML =
                     "Rs. " +
-                    (student.discountFees || 0) +
+                    limit +
                     " /-";
             } else {
                 $("discountrow").style.display = "none";
+                $("discountfees").innerHTML = "";
             }
+
+            /*
+             * Previous Paid = all payments before the payment whose
+             * receipt is currently being viewed.
+             */
+            let payments =
+                Array.isArray(student.payments)
+                    ? student.payments
+                    : [];
+
+            let paymentIndex = payments.findIndex(p =>
+                String(p.receipt || "") ==
+                String(payment.receipt || "")
+            );
+
+            let previousPaid = 0;
+
+            if (paymentIndex > 0) {
+                previousPaid = payments
+                    .slice(0, paymentIndex)
+                    .reduce(
+                        (s, item) =>
+                            s + (Number(item.received) || 0),
+                        0
+                    );
+            }
+
+            if (previousPaid > 0) {
+                $("previouspaidrow").style.display = "flex";
+                $("previouspaid").innerHTML =
+                    "Rs. " + previousPaid + " /-";
+            } else {
+                $("previouspaidrow").style.display = "none";
+                $("previouspaid").innerHTML = "";
+            }
+
+            /*
+             * Use the saved remaining amount for the exact payment receipt.
+             * This is the amount that was remaining immediately after that
+             * payment was made.
+             */
+            let paymentRemaining =
+                payment.remaining !== undefined
+                    ? Number(payment.remaining)
+                    : Math.max(
+                        0,
+                        limit -
+                        (
+                            previousPaid +
+                            (Number(payment.received) || 0)
+                        )
+                    );
+
             $("paidfees").innerHTML =
                 "Rs. " +
                 (payment.received || 0) +
                 " /- By " +
                 (payment.payment || "");
+
             $("remaining").innerHTML =
                 "Rs. " +
-                (
-                    payment.remaining !== undefined
-                        ? payment.remaining
-                        : getRemaining(student)
-                ) +
+                paymentRemaining +
                 " /-";
+
             $("receiptno").value =
                 payment.receipt || "";
+
             $("date").value =
                 payment.date || "";
         }
+
         function closedata() {
             $("data").style.display = "none";
             $("paymenthistory").style.display = "none";
@@ -2299,6 +2355,8 @@
             $("t5").value = "";
             $("currentremaining").value = "";
             $("currentrow").style.display = "none";
+            $("previouspaidrow").style.display = "none";
+            $("previouspaid").innerHTML = "";
             $("studentstatus").style.display = "none";
             oldstudent = false;
             oldremaining = 0;
